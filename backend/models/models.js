@@ -79,7 +79,7 @@ let organizationDataSchema = new Schema({
     },{
         collection: 'organizationData',
         timestamps: true 
-    }); 
+}); 
 
 //collection for eventData
 let eventDataSchema = new Schema({
