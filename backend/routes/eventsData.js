@@ -66,7 +66,7 @@ router.get("/client/:id", (req, res, next) => {
 });
 
 //POST
-router.post("/", (req, res, next) => { 
+router.post("/createevent", (req, res, next) => { 
     eventdata.create( 
         req.body, 
         (error, data) => { 

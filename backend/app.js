@@ -5,8 +5,12 @@ const cors = require("cors");
 //allow using a .env file
 require("dotenv").config();   
 
+
 //creates a new instance of express application
 const app = express();
+
+
+
 
 // add cors header to the server
 app.use(cors({
@@ -24,7 +28,7 @@ mongoose
   });
 
 //declare port number for the api
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 27017;
 
 //setup
 app.use(express.json());
@@ -33,16 +37,18 @@ app.use(morgan("dev"));
 //import routes
 const primaryDataRoute  = require('./routes/primaryData');
 const eventsDataRoute  = require('./routes/eventsData');
+const serviceDataRoute = require('./routes/serviceDataRoute');
 
 //setup middle ware for routes
 app.use('/primaryData', primaryDataRoute);
-app.use('/eventData', eventsDataRoute)
+app.use('/eventData', eventsDataRoute);
+app.use('/serviceDataRoute', serviceDataRoute);
 
 app.listen(PORT, () => {
   console.log("Server started listening on port : ", PORT);
 });
 
-
+/*
 // imports servicedata model from serviceData.js file
 let serviceDataModel = require('./models/serviceData')
 
@@ -54,8 +60,6 @@ let primaryDataModel = require('./models/primaryData1')
 
 // imports eventdata model from eventData.js file
 let eventDataModel = require('./models/eventData')
-
-
 
 ///// GETTER method to get  all results from service data doc
 
@@ -111,8 +115,7 @@ app.get('/eventdata', (req, res, next) => {
     }
   })
 });
-
-
+*/
 
 //error handler
 app.use(function (err, req, res, next) {

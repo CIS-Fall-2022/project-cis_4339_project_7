@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 //importing data model schemas
-let { servicedata } = require("../models/serviceData"); 
+let { servicedata } = require("../models/models"); 
 
 //GET all entries
 router.get("/", (req, res, next) => { 
@@ -31,7 +31,7 @@ router.get("/id/:id", (req, res, next) => {
 
 
 //POST
-router.post("/", (req, res, next) => { 
+router.post("/createservice", (req, res, next) => { 
     servicedata.create( 
         req.body, 
         (error, data) => { 
