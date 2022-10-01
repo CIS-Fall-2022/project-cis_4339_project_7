@@ -92,4 +92,17 @@ router.put("/:id", (req, res, next) => {
     );
 });
 
+router.put('/addservicetoclient/:id', (req, res, next) => {
+    primarydata.findOneAndUpdate({ clientID: req.params.id }, 
+        { $addToSet: {servicesNeeded : req.body.servicesID} }, 
+        (error, data) => {
+            if (error) {
+            return next(error);
+            } else {
+            res.send('Service is added via PUT');
+            console.log('Service successfully added!', data)
+            }
+      })
+});
+
 module.exports = router;

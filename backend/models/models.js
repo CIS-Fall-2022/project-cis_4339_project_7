@@ -23,6 +23,11 @@ let serviceDataSchema = new Schema({
 //collection for intakeData
 let primaryDataSchema = new Schema({
     _id: { type: String, default: uuid.v1 },
+    clientID: {
+        type: Number,
+        require: true,
+        unique: true
+    },
     firstName: {
         type: String,
         require: true
@@ -38,7 +43,7 @@ let primaryDataSchema = new Schema({
         type: String
     },
     phoneNumbers: {
-        type: Array,
+        type: [String],
         required: true
     },
     address: {
@@ -59,9 +64,12 @@ let primaryDataSchema = new Schema({
             type: String,
         }
     },
-    servicesNeeded: [{
-        type: ObjectID,
-        ref: 'serviceData'
+    servicesNeeded: {
+        type: [String] // references the serviceData ID
+    },
+    clientOfOrgs: [{
+        type: mongoose.Schema.Types.ObjectID,
+        ref: 'organizationData'
     }]
 }, {
     collection: 'primaryData',
@@ -76,7 +84,7 @@ let organizationDataSchema = new Schema({
         require: true
     },
     servicesProvided: [{
-        type: ObjectID,
+        type: mongoose.Schema.Types.ObjectID,
         ref: 'serviceData'
     }]
     },{
@@ -92,7 +100,7 @@ let eventDataSchema = new Schema({
         require: true
     },
     organizations: [{
-        type: ObjectID,
+        type: mongoose.Schema.Types.ObjectID,
         ref: 'organizationData'
     }],
     services: [{
@@ -123,10 +131,11 @@ let eventDataSchema = new Schema({
     description: {
         type: String,
     },
-    attendees: [{
-        type: ObjectID,
+    attendees: {
+        // type: mongoose.Schema.Types.ObjectID
+        type: [mongoose.Schema.Types.ObjectID], //is this right?
         ref: 'primaryData'
-    }]
+    }
 }, {
     collection: 'eventData'
 });
