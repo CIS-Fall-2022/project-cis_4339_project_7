@@ -2,12 +2,17 @@ const uuid = require('uuid');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const  ObjectID = require('mongodb').ObjectId;
+//const  ObjectID = require('mongodb').ObjectId;
 
 
 //collection for serviceData 
 let serviceDataSchema = new Schema({ 
     _id: {type: String, default: uuid.v1}, 
+    serviceID: {
+        type: String,
+        require: true,
+        unique: true
+    },
     serviceName: {
         type: String, 
         require: true
@@ -24,7 +29,7 @@ let serviceDataSchema = new Schema({
 let primaryDataSchema = new Schema({
     _id: { type: String, default: uuid.v1 },
     clientID: {
-        type: Number,
+        type: String,
         require: true,
         unique: true
     },
@@ -43,7 +48,7 @@ let primaryDataSchema = new Schema({
         type: String
     },
     phoneNumbers: {
-        type: [String],
+        type: [String], //must follow valid phone number format
         required: true
     },
     address: {
@@ -65,12 +70,11 @@ let primaryDataSchema = new Schema({
         }
     },
     servicesNeeded: {
-        type: [String] // references the serviceData ID
+        type: [String] // references the serviceData serviceID
     },
-    clientOfOrgs: [{
-        type: mongoose.Schema.Types.ObjectID,
-        ref: 'organizationData'
-    }]
+    clientOfOrgs: {
+        type: [String] // references the organizationData organisationID
+    }
 }, {
     collection: 'primaryData',
     timestamps: true
@@ -79,14 +83,18 @@ let primaryDataSchema = new Schema({
 //collection for organizationData 
 let organizationDataSchema = new Schema({ 
     _id: {type: String, default: uuid.v1}, 
+    organizationID: {
+        type: String,
+        require: true,
+        unique: true
+    },
     organizationName: {
         type: String, 
         require: true
     },
-    servicesProvided: [{
-        type: mongoose.Schema.Types.ObjectID,
-        ref: 'serviceData'
-    }]
+    servicesProvided: {
+        type: [String] // references the serviceData serviceID
+    }
     },{
         collection: 'organizationData',
         timestamps: true 
@@ -95,18 +103,21 @@ let organizationDataSchema = new Schema({
 //collection for eventData
 let eventDataSchema = new Schema({
     _id: { type: String, default: uuid.v1 },
+    eventID: {
+        type: Number,
+        require: true,
+        unique: true
+    },
     eventName: {
         type: String,
         require: true
     },
-    organizations: [{
-        type: mongoose.Schema.Types.ObjectID,
-        ref: 'organizationData'
-    }],
-    services: [{
-        type: ObjectID,
-        ref: 'serviceData'
-    }],
+    organizations: {
+        type: [String] // references the organizationData organizationID
+    },
+    services: {
+        type: [String] // references the serviceData serviceID
+    },
     date: {
         type: Date,
         required: true
@@ -132,9 +143,7 @@ let eventDataSchema = new Schema({
         type: String,
     },
     attendees: {
-        // type: mongoose.Schema.Types.ObjectID
-        type: [mongoose.Schema.Types.ObjectID], //is this right?
-        ref: 'primaryData'
+        type: [String] // references the primaryData clientID
     }
 }, {
     collection: 'eventData'

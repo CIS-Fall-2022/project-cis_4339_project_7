@@ -18,8 +18,8 @@ router.get("/", (req, res, next) => {
 });
 
 //GET single entry by ID
-router.get("/id/:id", (req, res, next) => { 
-    organizationdata.find({ _id: req.params.id }, (error, data) => {
+router.get("/searchorganization/:id", (req, res, next) => { 
+    organizationdata.findOne({ organizationID: req.params.id }, (error, data) => {
         if (error) {
             return next(error)
         } else {
@@ -31,7 +31,7 @@ router.get("/id/:id", (req, res, next) => {
 
 
 //POST
-router.post("/createservice", (req, res, next) => { 
+router.post("/createorg", (req, res, next) => { 
     organizationdata.create( 
         req.body, 
         (error, data) => { 
@@ -45,9 +45,9 @@ router.post("/createservice", (req, res, next) => {
 });
 
 //PUT
-router.put("/:id", (req, res, next) => {
+router.put("/updateorganization/:id", (req, res, next) => {
     organizationdata.findOneAndUpdate(
-        { _id: req.params.id },
+        { organizationID: req.params.id },
         req.body,
         (error, data) => {
             if (error) {
