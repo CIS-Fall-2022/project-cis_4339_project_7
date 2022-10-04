@@ -34,7 +34,7 @@ router.get("/id/:id", (req, res, next) => {
 /// DELETE BY ID
 
 router.delete('/eventdata/:id', (req, res, next) => {
-    eventdata.findOneAndRemove({ _id: req.params.id}, (error, data) => {
+    eventdata.findOneAndRemove({ eventID: req.params.id}, (error, data) => {
         if (error) {
           return next(error);
         } else {
@@ -86,7 +86,7 @@ router.get("/client/:id", (req, res, next) => {
 });
 
 //POST
-router.post("/createevent", (req, res, next) => { 
+router.post("/event", (req, res, next) => { 
     eventdata.create( 
         req.body, 
         (error, data) => { 
@@ -143,5 +143,55 @@ router.put("/addAttendee/:id", (req, res, next) => {
     );
     
 });
+
+
+
+// endpoint that will search clients attached to an organization by clientID
+router.get('/event/:clientID', (req, res, next) => {
+    eventdata.aggregate([
+      { $match : { clientID : req.params.clientID } },
+      { $project : { _id : 0, clientID: 1, firstName: 1, lastName: 1, email: 1,  } },
+      { $lookup : {
+          from : 'primaryData',
+          localField : 'clientID',
+          foreignField : 'clientID',
+          as : 'primaryData'
+      } }
+    ], (error, data) => {
+        if (error) {
+          return next(error)
+        } else {
+          res.json(data);
+        }
+    });
+});
+
+
+
+
+//// DOESNT WORK. MAY BE DUE TO NO TIE IN WITH SERVICEDATA MODEL (NO  eventID IN MODEL)
+/// search services tied to a specific event
+router.get('/event/:serviceID', (req, res, next) => {
+    eventdata.aggregate([
+      { $match : { serviceID : req.params.serviceID } },
+      { $project : { _id : 0, serviceID: 1 } },
+      { $lookup : {
+          from : 'serviceData',
+          localField : 'eventID',
+          foreignField : 'serviceID',
+          as : 'serviceData'
+      } }
+    ], (error, data) => {
+        if (error) {
+          return next(error)
+        } else {
+          res.json(data);
+        }
+    });
+});
+
+
+
+
 
 module.exports = router;

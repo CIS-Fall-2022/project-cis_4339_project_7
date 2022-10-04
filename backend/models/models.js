@@ -108,6 +108,9 @@ let eventDataSchema = new Schema({
         require: true,
         unique: true
     },
+    clientID: {
+        type: String
+    },
     eventName: {
         type: String,
         require: true

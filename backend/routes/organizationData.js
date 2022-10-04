@@ -70,7 +70,7 @@ router.put("/:id", (req, res, next) => {
 
 router.delete('/organizationdata/:id', (req, res, next) => {
 
-    organizationdata.findOneAndRemove({ _id: req.params.id}, (error, data) => {
+    organizationdata.findOneAndRemove({ organizationID: req.params.id}, (error, data) => {
         if (error) {
           return next(error);
         } else {

@@ -33,7 +33,7 @@ router.get("/id/:id", (req, res, next) => {
 
 router.delete('/servicedata/:id', (req, res, next) => {
 
-    servicedata.findOneAndRemove({ _id: req.params.id}, (error, data) => {
+    servicedata.findOneAndRemove({ serviceID: req.params.id}, (error, data) => {
         if (error) {
           return next(error);
         } else {

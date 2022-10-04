@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan"); //better debugging
 const cors = require("cors");
+
+
 //allow using a .env file
 require("dotenv").config();   
 
@@ -43,7 +45,7 @@ const organizationDataRoute = require('./routes/organizationData');
 //setup middle ware for routes
 app.use('/primaryData', primaryDataRoute);
 app.use('/eventData', eventsDataRoute);
-app.use('/serviceDataRoute', serviceDataRoute);
+app.use('/serviceData', serviceDataRoute);
 app.use('/organizationData', organizationDataRoute);
 
 app.listen(PORT, () => {
