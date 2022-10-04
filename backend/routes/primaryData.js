@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router(); 
 
 //importing data model schemas
-let { primarydata } = require("../models/models");  
+let { primarydata } = require("../models/models"); 
+let { eventdata } = require("../models/models");
 
 // CRUD OPS
 
@@ -82,8 +83,18 @@ router.get("/search/", (req, res, next) => {
 
 // GET events for a single client
 router.get("/events/:id", (req, res, next) => { 
-    
+    eventdata.find( 
+        { attendees: req.params.id }, 
+        (error, data) => {
+            if (error) {
+                return next(error);
+            } else {
+                res.json(data);
+            }
+        }
+    );
 });
+
 
 // GET this retrieves a list of organizations by name for a specified client
 router.get("/listoforgforclientbyid/:id", (req, res, next) => { 
