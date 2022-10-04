@@ -8,6 +8,11 @@ const  ObjectID = require('mongodb').ObjectId;
 //collection for serviceData 
 let serviceDataSchema = new Schema({ 
     _id: {type: String, default: uuid.v1}, 
+    serviceID: {
+        type: String,
+        require: true,
+        unique: true
+    },
     serviceName: {
         type: String, 
         require: true
@@ -23,6 +28,11 @@ let serviceDataSchema = new Schema({
 //collection for intakeData
 let primaryDataSchema = new Schema({
     _id: { type: String, default: uuid.v1 },
+    clientID: {
+        type: String,
+        require: true,
+        unique: true
+    },
     firstName: {
         type: String,
         require: true
@@ -59,11 +69,13 @@ let primaryDataSchema = new Schema({
             type: String,
         }
     },
-    servicesNeeded: [{
-        type: ObjectID,
-        ref: 'serviceData'
-    }]
-}, {
+    servicesNeeded: {
+        type: [String] // references serviceID in serviceData collection
+    },
+    clientOfOrgs: {
+        type: [String] // references organizationID in organizationData collection
+    }}, 
+{
     collection: 'primaryData',
     timestamps: true
 });
@@ -71,14 +83,18 @@ let primaryDataSchema = new Schema({
 //collection for organizationData 
 let organizationDataSchema = new Schema({ 
     _id: {type: String, default: uuid.v1}, 
+    organizationID: {
+        type: String,
+        require: true,
+        unique: true
+    },
     organizationName: {
         type: String, 
         require: true
     },
-    servicesProvided: [{
-        type: ObjectID,
-        ref: 'serviceData'
-    }]
+    servicesProvided: {
+        type: [String] // references serviceID in serviceData collection
+    }
     },{
         collection: 'organizationData',
         timestamps: true 
@@ -87,18 +103,21 @@ let organizationDataSchema = new Schema({
 //collection for eventData
 let eventDataSchema = new Schema({
     _id: { type: String, default: uuid.v1 },
+    eventID: {
+        type: String,
+        require: true,
+        unique: true
+    },
     eventName: {
         type: String,
         require: true
     },
-    organizations: [{
-        type: ObjectID,
-        ref: 'organizationData'
-    }],
-    services: [{
-        type: ObjectID,
-        ref: 'serviceData'
-    }],
+    organizations: {
+        type: [String] // references organizationID in organizationData collection
+    },
+    services: {
+        type: [String] // references serviceID in serviceData collection
+    },
     date: {
         type: Date,
         required: true
@@ -123,10 +142,9 @@ let eventDataSchema = new Schema({
     description: {
         type: String,
     },
-    attendees: [{
-        type: ObjectID,
-        ref: 'primaryData'
-    }]
+    attendees: {
+        type: [String] // references clientID in primaryData collection
+    }
 }, {
     collection: 'eventData'
 });
