@@ -3,6 +3,9 @@ const router = express.Router();
 
 //importing data model schemas
 let { eventdata } = require("../models/models"); 
+let { servicedata } = require("../models/models"); 
+let { primarydata } = require("../models/models"); 
+
 
 //GET all entries
 router.get("/", (req, res, next) => { 
@@ -27,6 +30,23 @@ router.get("/id/:id", (req, res, next) => {
         }
     })
 });
+
+/// DELETE BY ID
+
+router.delete('/eventdata/:id', (req, res, next) => {
+    eventdata.findOneAndRemove({ _id: req.params.id}, (error, data) => {
+        if (error) {
+          return next(error);
+        } else {
+           res.status(200).json({
+             msg: data
+           });
+        }
+      });
+});
+
+
+
 
 //GET entries based on search query
 //Ex: '...?eventName=Food&searchBy=name' 

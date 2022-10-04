@@ -29,6 +29,22 @@ router.get("/id/:id", (req, res, next) => {
 });
 
 
+// delete by id
+
+router.delete('/servicedata/:id', (req, res, next) => {
+
+    servicedata.findOneAndRemove({ _id: req.params.id}, (error, data) => {
+        if (error) {
+          return next(error);
+        } else {
+           res.status(200).json({
+             msg: data
+           });
+        //   res.send('Service has been deleted');
+        }
+      });
+});
+
 
 //POST
 router.post("/createservice", (req, res, next) => { 

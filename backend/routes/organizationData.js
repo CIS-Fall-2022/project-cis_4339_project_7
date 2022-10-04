@@ -66,4 +66,21 @@ router.put("/:id", (req, res, next) => {
 //GET clients for organization
 
 //delete by ID
+
+
+router.delete('/organizationdata/:id', (req, res, next) => {
+
+    organizationdata.findOneAndRemove({ _id: req.params.id}, (error, data) => {
+        if (error) {
+          return next(error);
+        } else {
+           res.status(200).json({
+             msg: data
+           });
+        }
+      });
+});
+
+
+
 module.exports = router;
