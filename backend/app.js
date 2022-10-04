@@ -12,8 +12,6 @@ require("dotenv").config();
 const app = express();
 
 
-
-
 // add cors header to the server
 app.use(cors({
   origin: '*'
@@ -39,7 +37,7 @@ app.use(morgan("dev"));
 //import routes
 const primaryDataRoute  = require('./routes/primaryData');
 const eventsDataRoute  = require('./routes/eventsData');
-const serviceDataRoute = require('./routes/serviceDataRoute');
+const serviceDataRoute = require('./routes/serviceData');
 const organizationDataRoute = require('./routes/organizationData');
 
 //setup middle ware for routes
