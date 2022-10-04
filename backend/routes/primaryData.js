@@ -3,7 +3,7 @@ const router = express.Router();
 
 //importing data model schemas
 let { primarydata } = require("../models/models"); 
-let { eventdata } = require("../models/models"); 
+let { organizationdata } = require("../models/models"); 
 
 //GET all entries
 router.get("/", (req, res, next) => { 
@@ -75,9 +75,9 @@ router.post("/", (req, res, next) => {
             }
         }
     );
-    primarydata.createdAt;
-    primarydata.updatedAt;
-    primarydata.createdAt instanceof Date;
+    console.log(primarydata.createdAt);
+    console.log(primarydata.updatedAt);
+    console.log(primarydata.createdAt instanceof Date);
 });
 
 //PUT update (make sure req body doesn't have the id)
@@ -106,6 +106,44 @@ router.put('/addclienttoorg/:id', (req, res, next) => {
             console.log('Organization Client successfully added!', data)
             }
       })
+});
+
+router.get("/listoforgforclientbyid", (req, res, next) => { 
+    primarydata.aggregate([
+        // $match finds an exact match base on the parameters that you set
+        // here we have look at the req.body.clientID
+        { $match: {
+            clientID: req.body.clientID
+        }},
+        // $lookup is like a join in SQL
+        { $lookup: {
+            from: 'organizationData',
+            localField: 'clientOfOrgs',
+            foreignField: 'organizationID',
+            as: 'organizations'
+        }}, //{$unwind: '$organizations'}, not using it but it flattens the results
+        // $addFields can create an alias for what you joined the tables "as"
+        { $addFields: {
+            "organization_name": "$organizations.organizationName"
+        }},
+        // $project acts like a filter
+        // you can pick which fields you want to show from the aggregate pipeline
+        { $project: {
+            clientID: 1,
+            firstName: 1,
+            lastName: 1,
+            organization_name: 1
+        }}
+        // can use $count to count how many attendees are signed up for each event
+        //this number would be useful for the frontend graph and table we need to create
+    ] , (error, data) => {
+            if (error) {
+                return next(error);
+            } else {
+                res.json(data);
+            }
+        }
+    ).sort({ 'updatedAt': -1 }).limit(10);
 });
 
 module.exports = router;
