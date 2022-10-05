@@ -36,7 +36,7 @@ router.get("/id/:id", (req, res, next) => {
 });
 
 
-// GET this retrieves a list of organizations by name for a specified client
+// GET this retrieves a list of clients attached to an event
 router.get("/eventdata1/:id", (req, res, next) => { 
     eventdata.aggregate([
         // $match finds an exact match base on the parameters that you set
@@ -128,8 +128,35 @@ router.get("/eventdata2/:id", (req, res, next) => {
 
 
 
-
-
+// GET this retrieves a list of clients attached to an event
+router.get("/total/:id", (req, res, next) => { 
+    eventdata.aggregate([
+        // $match finds an exact match base on the parameters that you set
+        // here we have look at the req.body.clientID
+        { $match: {
+            eventID: req.params.id
+        }},
+        // $lookup is like a join in SQL
+        { $lookup: {
+            from: 'primaryData',
+            localField: 'attendees',
+            foreignField: 'clientID',
+            as: 'clients'
+        }}, 
+        { $unwind: '$clients'},
+        { $project: {
+            _id : 0,
+            number_of_clients : {$size: '$attendees'}}},
+        { $sort : { "date": -1 }}
+    ] , (error, data) => {
+            if (error) {
+                return next(error);
+            } else {
+                res.json(data);
+            }
+        }
+    ).sort({ 'updatedAt': -1 }).limit(10);
+});
 
 
 
