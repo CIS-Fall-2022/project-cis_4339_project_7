@@ -34,6 +34,8 @@ router.get("/", (req, res, next) => {
         (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('No Clients found');
             } else {
                 res.json(data);
             }
@@ -43,11 +45,13 @@ router.get("/", (req, res, next) => {
 
 // GET single entry by ID
 router.get("/id/:id", (req, res, next) => {
-    primarydata.find( 
+    primarydata.findOne( 
         { clientID: req.params.id }, 
         (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data === null) {
+                res.status(404).send('Client not found');
             } else {
                 res.json(data);
             }
@@ -60,10 +64,11 @@ router.get("/id/:id", (req, res, next) => {
 // Ex: '...?phoneNumbers=555-555-8888&searchBy=number'
 router.get("/search/", (req, res, next) => { 
     let dbQuery = "";
-    if (req.query["searchBy"] === 'name') {
+    if (req.query["searchBy"] === 'name' && 
+    (req.query["firstName"].length >= 1 || req.query["lastName"].length >= 1)) {
         dbQuery = { firstName: { $regex: `^${req.query["firstName"]}`,
          $options: "i" }, lastName: { $regex: `^${req.query["lastName"]}`, $options: "i" } }
-    } else if (req.query["searchBy"] === 'number') {
+    } else if (req.query["searchBy"] === 'number' && req.query["phoneNumbers"].length >= 1) {
         dbQuery = {
             "phoneNumbers": { $regex: `^${req.query["phoneNumbers"]}`, 
             $options: "i" }
@@ -74,6 +79,8 @@ router.get("/search/", (req, res, next) => {
         (error, data) => { 
             if (error) {
                 return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('Client not found');
             } else {
                 res.json(data);
             }
@@ -88,6 +95,8 @@ router.get("/events/:id", (req, res, next) => {
         (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('Client not found');
             } else {
                 res.json(data);
             }
@@ -110,8 +119,11 @@ router.get("/listoforgforclientbyid/:id", (req, res, next) => {
             localField: 'clientOfOrgs',
             foreignField: 'organizationID',
             as: 'organizations'
-        }}, //{$unwind: '$organizations'}, not using it but it flattens the results
-        // $addFields can create an alias for what you joined the tables "as"
+        }}, 
+        /*
+        // keeping this code for future reference
+        {$unwind: '$organizations'}, // not using it but it flattens the results
+         $addFields can create an alias for what you joined the tables "as"
         { $addFields: {
             "organization_name": "$organizations.organizationName"
         }},
@@ -123,11 +135,14 @@ router.get("/listoforgforclientbyid/:id", (req, res, next) => {
             lastName: 1,
             organization_name: 1
         }}
-        // can use $count to count how many attendees are signed up for each event
+        //can use $count to count how many attendees are signed up for each event
         //this number would be useful for the frontend graph and table we need to create
+        */
     ] , (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('Client not found');
             } else {
                 res.json(data);
             }
@@ -149,24 +164,14 @@ router.get("/listofsrvcsforclientbyid/:id", (req, res, next) => {
             localField: 'servicesNeeded',
             foreignField: 'serviceID',
             as: 'services'
-        }}, //{$unwind: '$services'}, not using it but it flattens the results
-        // $addFields can create an alias for what you joined the tables "as"
-        { $addFields: {
-            "service_name": "$services.serviceName"
-        }},
-        // $project acts like a filter
-        // you can pick which fields you want to show from the aggregate pipeline
-        { $project: {
-            clientID: 1,
-            firstName: 1,
-            lastName: 1,
-            service_name: 1
-        }}
+        }}, 
         // can use $count to count how many attendees are signed up for each event
         //this number would be useful for the frontend graph and table we need to create
     ] , (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('Client not found');
             } else {
                 res.json(data);
             }
@@ -177,13 +182,15 @@ router.get("/listofsrvcsforclientbyid/:id", (req, res, next) => {
 // UPDATE OPS PUT Method
 
 // PUT update (make sure req body doesn't have the id)
-router.put("updateclient/:id", (req, res, next) => { 
+router.put("/updateclient/:id", (req, res, next) => { 
     primarydata.findOneAndUpdate( 
         { clientID : req.params.id }, 
         req.body,
         (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data === null) {
+                res.status(404).send('Client not found');
             } else {
                 res.json(data);
             }
@@ -194,14 +201,17 @@ router.put("updateclient/:id", (req, res, next) => {
 // PUT this updates the clientOfOrgs array
 // Adds a new organization to the list that the client belongs to
 router.put('/addclienttoorg/:id', (req, res, next) => {
-    primarydata.findOneAndUpdate({ clientID: req.params.id }, 
-        { $addToSet: { clientOfOrgs : req.body.organizationID} }, 
+    primarydata.findOneAndUpdate({ clientID: req.params.id, 
+        clientOfOrgs: {$not: {$in: req.body.organizationID}} }, 
+        { $addToSet: { clientOfOrgs : req.body.organizationID} },
         (error, data) => {
             if (error) {
             return next(error);
+            } else if (data === null) {
+                res.status(409).send('Organization is already added or client does not exist');
             } else {
             res.send('Organization Client is added via PUT');
-            console.log('Organization Client successfully added!', data)
+            console.log('Organization Client successfully added!', data);
             }
       })
 });
@@ -209,11 +219,14 @@ router.put('/addclienttoorg/:id', (req, res, next) => {
 // PUT this updates the clientOfOrgs array
 // Removes a specified organization from the client's list
 router.put('/removeclientorg/:id', (req, res, next) => {
-    primarydata.findOneAndUpdate({ clientID: req.params.id }, 
+    primarydata.findOneAndUpdate({ clientID: req.params.id,
+        clientOfOrgs: {$in: req.body.organizationID}}, 
         { $pull: { clientOfOrgs : req.body.organizationID} }, 
         (error, data) => {
             if (error) {
             return next(error);
+            } else if (data === null) {
+                res.status(409).send('Organization is already removed or client does not exist');
             } else {
             res.send('Organization Client is removed via PUT');
             console.log('Organization Client successfully removed!', data)
@@ -224,11 +237,14 @@ router.put('/removeclientorg/:id', (req, res, next) => {
 // PUT this updates the servicesNeeded array
 // Adds a new service to the client's list
 router.put('/addserviceforclient/:id', (req, res, next) => {
-    primarydata.findOneAndUpdate({ clientID: req.params.id }, 
+    primarydata.findOneAndUpdate({ clientID: req.params.id,
+        servicesNeeded: {$not: { $in: req.body.serviceID }} }, 
         { $addToSet: { servicesNeeded : req.body.serviceID} }, 
         (error, data) => {
             if (error) {
             return next(error);
+            } else if (data === null) {
+                res.status(409).send('Service is already added or client does not exist');
             } else {
             res.send('Service for Client is added via PUT');
             console.log('Service for Client successfully added!', data)
@@ -239,11 +255,14 @@ router.put('/addserviceforclient/:id', (req, res, next) => {
 // PUT this updates the servicesNeeded array
 // Removes a specified service from the client's list
 router.put('/removeserviceforclient/:id', (req, res, next) => {
-    primarydata.findOneAndUpdate({ clientID: req.params.id }, 
+    primarydata.findOneAndUpdate({ clientID: req.params.id, 
+    servicesNeeded : {$in: req.body.serviceID} }, 
         { $pull: { servicesNeeded : req.body.serviceID} }, 
         (error, data) => {
             if (error) {
             return next(error);
+            } else if (data === null) {
+                res.status(409).send('Service has already been removed or client does not exist');
             } else {
                 res.send('Service for Client is removed via PUT');
                 console.log('Service for Client successfully removed!', data)
@@ -255,10 +274,12 @@ router.put('/removeserviceforclient/:id', (req, res, next) => {
 // DELETE OPS DELETE Method
 
 // DELETE deletes a client from the DB based on clientID
-router.delete('/primarydata/:id', (req, res, next) => {
+router.delete('/primarydatadel/:id', (req, res, next) => {
     primarydata.findOneAndRemove({ clientID: req.params.id}, (error, data) => {
         if (error) {
           return next(error);
+        } else if (data === null) {
+            res.status(404).send('Client not found');
         } else {
            res.status(200).json({
              msg: data
