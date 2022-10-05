@@ -4,7 +4,7 @@ const router = express.Router();
 //importing data model schemas
 let { organizationdata } = require("../models/models"); 
 let {eventdata} = require("../models/models");
-let {servicedata} = require("../models/models");
+let { primarydata } = require("../models/models"); 
 
 //GET all entries
 router.get("/", (req, res, next) => { 
@@ -48,7 +48,7 @@ router.post("/createorg", (req, res, next) => {
 //PUT
 router.put("/:id", (req, res, next) => {
     organizationdata.findOneAndUpdate(
-        { _id: req.params.id },
+        { organizationID: req.params.id },
         req.body,
         (error, data) => {
             if (error) {
@@ -61,14 +61,12 @@ router.put("/:id", (req, res, next) => {
 });
 
 //GET services provided
-//would this populate multiple services? since service in organization is an array
-
-router.get("/servicesprovided", (req, res, next) => { 
+router.get("/services/:id", (req, res, next) => { 
     organizationdata.aggregate([
         // $match finds an exact match base on the parameters that you set
         // here we have look at the req.body.clientID
         { $match: {
-            organizationID: req.body.organizationID
+            organizationID: req.params.id
         }},
         // $lookup is like a join in SQL
         { $lookup: {
@@ -76,7 +74,7 @@ router.get("/servicesprovided", (req, res, next) => {
             localField: 'servicesProvided',
             foreignField: 'serviceID',
             as: 'services'
-        }}, //{$unwind: '$organizations'}, not using it but it flattens the results
+        }}, //{$unwind: '$services'}, not using it but it flattens the results
         // $addFields can create an alias for what you joined the tables "as"
         { $addFields: {
             "service_name": "$services.serviceName"
@@ -100,22 +98,11 @@ router.get("/servicesprovided", (req, res, next) => {
     ).sort({ 'updatedAt': -1 }).limit(10);
 });
 
-//GET organizations by name or services?
-
-router.get("/search/", (req, res, next) => { 
-    let dbQuery = "";
-    if (req.query["searchBy"] === 'name') {
-        dbQuery = { organizationName: { $regex: `^${req.query["organizationName"]}`,
-         $options: "i" }}
-    } else if (req.query["searchBy"] === 'services') {
-        dbQuery = {
-            "servicesProvided": { $regex: `^${req.query["servicesProvided"]}`, 
-            $options: "i" }
-        }
-    };
-    primarydata.find( 
-        dbQuery, 
-        (error, data) => { 
+//GET all events for organization
+router.get("/events/:id", (req, res, next) => { 
+    eventdata.find( 
+        { organizations: req.params.id }, 
+        (error, data) => {
             if (error) {
                 return next(error);
             } else {
@@ -125,12 +112,62 @@ router.get("/search/", (req, res, next) => {
     );
 });
 
-//GET events for organization
-//have to get from event the organizaion name 
-//have to go through every single event to see if an org is in the array list
+//GET clients for organization
+router.get("/clients/:id", (req, res, next) => { 
+    primarydata.find( 
+        { clientOfOrgs: req.params.id }, 
+        (error, data) => {
+            if (error) {
+                return next(error);
+            } else {
+                res.json(data);
+            }
+        }
+    );
+});
+
+//delete organization by ID
+router.delete('/removeorg/:id', (req, res, next) => {
+    organizationdata.findOneAndRemove({ organizationID: req.params.id}, (error, data) => {
+        if (error) {
+          return next(error);
+        } else {
+           res.status(200).json({
+             msg: data
+           });
+        }
+    ;
+});
+
+// delete services in org
+router.put('/removeservice/:id', (req, res, next) => {
+    organizationdata.findOneAndUpdate({ organizationID: req.params.id }, 
+        { $pull: { servicesProvided : req.body.serviceID} }, 
+        (error, data) => {
+            if (error) {
+            return next(error);
+            } else {
+            res.send('Service is removed via PUT');
+            console.log('Service successfully removed!', data)
+            }
+      })
+});
+
+//add serviceID to array
+router.put('/addservicefororg/:id', (req, res, next) => {
+    organizationdata.findOneAndUpdate({ organizationID: req.params.id }, 
+        { $addToSet: { servicesProvided : req.body.serviceID} }, 
+        (error, data) => {
+            if (error) {
+            return next(error);
+            } else {
+            res.send('Service for Organization is added via PUT');
+            console.log('Service for Organization successfully added!', data)
+            }
+      })
+});
 
 
 
-//delete by ID
 
-module.exports = router;
+module.exports = router; 
