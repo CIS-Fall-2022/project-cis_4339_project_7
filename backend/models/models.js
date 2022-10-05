@@ -19,7 +19,8 @@ let serviceDataSchema = new Schema({
     }, 
     serviceDescription: {
         type: String, 
-        require: true}
+        require: true
+    }
     },{
         collection: 'serviceData',
         timestamps: true

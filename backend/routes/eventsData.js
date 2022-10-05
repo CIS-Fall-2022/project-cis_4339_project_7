@@ -1,10 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
+
 //importing data model schemas
 let { eventdata } = require("../models/models"); 
 let { servicedata } = require("../models/models"); 
 let { primarydata } = require("../models/models"); 
+
+
 
 
 //GET all entries
@@ -20,9 +23,10 @@ router.get("/", (req, res, next) => {
     ).sort({ 'updatedAt': -1 }).limit(10);
 });
 
-//GET single entry by ID
+//GET SINGLE ENTRY BY ID
 router.get("/id/:id", (req, res, next) => { 
-    eventdata.find({ _id: req.params.id }, (error, data) => {
+    eventdata.find({ eventID: req.params.id }, 
+        (error, data) => {
         if (error) {
             return next(error)
         } else {
@@ -31,19 +35,101 @@ router.get("/id/:id", (req, res, next) => {
     })
 });
 
-/// DELETE BY ID
 
-router.delete('/eventdata/:id', (req, res, next) => {
-    eventdata.findOneAndRemove({ eventID: req.params.id}, (error, data) => {
-        if (error) {
-          return next(error);
-        } else {
-           res.status(200).json({
-             msg: data
-           });
+// GET this retrieves a list of organizations by name for a specified client
+router.get("/eventdata1/:id", (req, res, next) => { 
+    eventdata.aggregate([
+        // $match finds an exact match base on the parameters that you set
+        // here we have look at the req.body.clientID
+        { $match: {
+            eventID: req.params.id
+        }},
+        // $lookup is like a join in SQL
+        { $lookup: {
+            from: 'primaryData',
+            localField: 'attendees',
+            foreignField: 'clientID',
+            as: 'clients'
+        }}, 
+        {$unwind: '$clients'},
+        // $addFields can create an alias for what you joined the tables "as"
+        { $addFields: {
+            "client_firstname": "$clients.firstName",
+            "client_lastname" : "$clients.lastName",
+            "client_email" : "$clients.email",
+            "client_phonenumber" : "$clients.phoneNumbers"
+        }},
+        // $project acts like a filter
+        // you can pick which fields you want to show from the aggregate pipeline
+        { $project: {
+            _id : 0,
+            client_firstname: 1,
+            client_lastname : 1,
+            client_email : 1,
+            client_phonenumber : 1
+        }}
+        // can use $count to count how many attendees are signed up for each event
+        //this number would be useful for the frontend graph and table we need to create
+    ] , (error, data) => {
+            if (error) {
+                return next(error);
+            } else {
+                res.json(data);
+            }
         }
-      });
+    ).sort({ 'updatedAt': -1 }).limit(10);
 });
+
+
+
+// GET endpoint that will search services attached to an event
+router.get("/eventdata2/:id", (req, res, next) => { 
+    eventdata.aggregate([
+        // $match finds an exact match base on the parameters that you set
+        // here we have look at the req.body.clientID
+        { $match: {
+            eventID: req.params.id
+        }},
+        // $lookup is like a join in SQL
+        { $lookup: {
+            from: 'serviceData',
+            localField: 'services',
+            foreignField: 'serviceID',
+            as: 'services',
+        },},
+        
+        {$unwind: '$services'}, 
+        // $addFields can create an alias for what you joined the tables "as"
+        { $addFields: {
+            "servicename": "$services.serviceName",
+            "servicedescription" : "$services.serviceDescription",
+            "serviceid" : "$services.serviceID",
+        }},
+        // $project acts like a filter
+        // you can pick which fields you want to show from the aggregate pipeline
+        { $project: {
+            _id : 0,
+            servicename : 1,
+            servicedescription : 1,
+            serviceid : 1,
+            eventName : 1
+        }}
+        // can use $count to count how many attendees are signed up for each event
+        //this number would be useful for the frontend graph and table we need to create
+    ] , (error, data) => {
+            if (error) {
+                return next(error);
+            } else {
+                res.json(data);
+            }
+        }
+    ).sort({ 'updatedAt': -1 }).limit(10);
+});
+
+
+
+
+
 
 
 
@@ -71,19 +157,7 @@ router.get("/search/", (req, res, next) => {
     );
 });
 
-//GET events for which a client is signed up
-router.get("/client/:id", (req, res, next) => { 
-    eventdata.find( 
-        { attendees: req.params.id }, 
-        (error, data) => { 
-            if (error) {
-                return next(error);
-            } else {
-                res.json(data);
-            }
-        }
-    );
-});
+
 
 //POST
 router.post("/event", (req, res, next) => { 
@@ -102,7 +176,7 @@ router.post("/event", (req, res, next) => {
 //PUT
 router.put("/:id", (req, res, next) => {
     eventdata.findOneAndUpdate(
-        { _id: req.params.id },
+        { eventID: req.params.id },
         req.body,
         (error, data) => {
             if (error) {
@@ -114,9 +188,69 @@ router.put("/:id", (req, res, next) => {
     );
 });
 
+
+
+
+
+router.put('/addservices/:id', (req, res, next) => {
+    eventdata.findOneAndUpdate(
+        { eventID: req.params.id },
+        { $addToSet: { services : req.body.serviceID } },
+        (error, data) => {
+            if (error) {
+            return next(error);
+            } else {
+            res.send('Service ID is added to services array in eventData via PUT');
+            }
+      })
+});
+
+
+// PUT this updates the clientOfOrgs array
+// Removes a specified organization from the client's list
+router.put('/removeservice/:id', (req, res, next) => {
+    eventdata.findOneAndUpdate({ eventID: req.params.id }, 
+        { $pull: { services : req.body.serviceID} }, 
+        (error, data) => {
+            if (error) {
+            return next(error);
+            } else {
+            res.send('Service ID is removed from services array in eventData via PUT');
+            }
+      })
+});
+
+router.put('/addattendees/:id', (req, res, next) => {
+    eventdata.findOneAndUpdate(
+        { eventID: req.params.id },
+        { $addToSet: { attendees : req.body.clientID } },
+        (error, data) => {
+            if (error) {
+            return next(error);
+            } else {
+            res.send('Attendee ID is added to services array in eventData via PUT');
+            }
+      })
+});
+
+router.put('/removeattendees/:id', (req, res, next) => {
+    eventdata.findOneAndUpdate(
+        { eventID: req.params.id }, 
+        { $pull: { attendees : req.body.clientID} }, 
+        (error, data) => {
+            if (error) {
+            return next(error);
+            } else {
+            res.send('Attendee ID is removed from services array in eventData via PUT');
+            }
+      })
+});
+
+
+/*
 //PUT add attendee to event
 router.put("/addAttendee/:id", (req, res, next) => {
-    //only add attendee if not yet signed uo
+    //only add attendee if not yet signed up
     eventdata.find( 
         { _id: req.params.id, attendees: req.body.attendee }, 
         (error, data) => { 
@@ -141,57 +275,24 @@ router.put("/addAttendee/:id", (req, res, next) => {
             }
         }
     );
-    
 });
 
+*/
 
 
-// endpoint that will search clients attached to an organization by clientID
-router.get('/event/:clientID', (req, res, next) => {
-    eventdata.aggregate([
-      { $match : { clientID : req.params.clientID } },
-      { $project : { _id : 0, clientID: 1, firstName: 1, lastName: 1, email: 1,  } },
-      { $lookup : {
-          from : 'primaryData',
-          localField : 'clientID',
-          foreignField : 'clientID',
-          as : 'primaryData'
-      } }
-    ], (error, data) => {
+
+/// DELETE BY ID
+router.delete('/eventdata/:id', (req, res, next) => {
+    eventdata.findOneAndRemove({ eventID: req.params.id}, (error, data) => {
         if (error) {
-          return next(error)
+          return next(error);
         } else {
-          res.json(data);
+           res.status(200).json({
+             msg: data
+           });
         }
-    });
+      });
 });
-
-
-
-
-//// DOESNT WORK. MAY BE DUE TO NO TIE IN WITH SERVICEDATA MODEL (NO  eventID IN MODEL)
-/// search services tied to a specific event
-router.get('/event/:serviceID', (req, res, next) => {
-    eventdata.aggregate([
-      { $match : { serviceID : req.params.serviceID } },
-      { $project : { _id : 0, serviceID: 1 } },
-      { $lookup : {
-          from : 'serviceData',
-          localField : 'eventID',
-          foreignField : 'serviceID',
-          as : 'serviceData'
-      } }
-    ], (error, data) => {
-        if (error) {
-          return next(error)
-        } else {
-          res.json(data);
-        }
-    });
-});
-
-
-
 
 
 module.exports = router;
