@@ -2,14 +2,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan"); //better debugging
 const cors = require("cors");
+
+
 //allow using a .env file
 require("dotenv").config();   
 
 
 //creates a new instance of express application
 const app = express();
-
-
 
 
 // add cors header to the server
@@ -37,13 +37,13 @@ app.use(morgan("dev"));
 //import routes
 const primaryDataRoute  = require('./routes/primaryData');
 const eventsDataRoute  = require('./routes/eventsData');
-const serviceDataRoute = require('./routes/serviceDataRoute');
+const serviceDataRoute = require('./routes/serviceData');
 const organizationDataRoute = require('./routes/organizationData');
 
 //setup middle ware for routes
 app.use('/primaryData', primaryDataRoute);
 app.use('/eventData', eventsDataRoute);
-app.use('/serviceDataRoute', serviceDataRoute);
+app.use('/serviceData', serviceDataRoute);
 app.use('/organizationData', organizationDataRoute);
 
 app.listen(PORT, () => {
