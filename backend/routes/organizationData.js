@@ -136,7 +136,7 @@ router.delete('/removeorg/:id', (req, res, next) => {
              msg: data
            });
         }
-    ;
+     }) ;
 });
 
 // delete services in org
