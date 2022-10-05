@@ -68,7 +68,7 @@ router.get("/servicesprovided", (req, res, next) => {
         // $match finds an exact match base on the parameters that you set
         // here we have look at the req.body.clientID
         { $match: {
-            organizationD: req.body.organizationID
+            organizationID: req.body.organizationID
         }},
         // $lookup is like a join in SQL
         { $lookup: {
@@ -100,13 +100,37 @@ router.get("/servicesprovided", (req, res, next) => {
     ).sort({ 'updatedAt': -1 }).limit(10);
 });
 
-//GET organizations by name
+//GET organizations by name or services?
+
+router.get("/search/", (req, res, next) => { 
+    let dbQuery = "";
+    if (req.query["searchBy"] === 'name') {
+        dbQuery = { organizationName: { $regex: `^${req.query["organizationName"]}`,
+         $options: "i" }}
+    } else if (req.query["searchBy"] === 'services') {
+        dbQuery = {
+            "servicesProvided": { $regex: `^${req.query["servicesProvided"]}`, 
+            $options: "i" }
+        }
+    };
+    primarydata.find( 
+        dbQuery, 
+        (error, data) => { 
+            if (error) {
+                return next(error);
+            } else {
+                res.json(data);
+            }
+        }
+    );
+});
 
 //GET events for organization
 //have to get from event the organizaion name 
 //have to go through every single event to see if an org is in the array list
 
-//GET clients for organization
+
 
 //delete by ID
+
 module.exports = router;
