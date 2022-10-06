@@ -6,6 +6,22 @@ let { organizationdata } = require("../models/models");
 let {eventdata} = require("../models/models");
 let { primarydata } = require("../models/models"); 
 
+//Post create new orgs
+router.post("/createorg", (req, res, next) => { 
+
+//POST
+    organizationdata.create( 
+        req.body, 
+        (error, data) => { 
+            if (error) {
+                return next(error);
+            } else {
+                res.json(data);
+            }
+        }
+    );
+});
+
 //GET all entries
 router.get("/", (req, res, next) => { 
     organizationdata.find( 
@@ -21,43 +37,13 @@ router.get("/", (req, res, next) => {
 
 //GET single entry by ID
 router.get("/id/:id", (req, res, next) => { 
-    organizationdata.find({ _id: req.params.id }, (error, data) => {
+    organizationdata.find({ organizationID: req.params.id }, (error, data) => {
         if (error) {
             return next(error)
         } else {
             res.json(data)
         }
     })
-});
-
-
-//POST
-router.post("/createorg", (req, res, next) => { 
-    organizationdata.create( 
-        req.body, 
-        (error, data) => { 
-            if (error) {
-                return next(error);
-            } else {
-                res.json(data);
-            }
-        }
-    );
-});
-
-//PUT
-router.put("/:id", (req, res, next) => {
-    organizationdata.findOneAndUpdate(
-        { organizationID: req.params.id },
-        req.body,
-        (error, data) => {
-            if (error) {
-                return next(error);
-            } else {
-                res.json(data);
-            }
-        }
-    );
 });
 
 //GET services provided
@@ -126,26 +112,48 @@ router.get("/clients/:id", (req, res, next) => {
     );
 });
 
-//delete organization by ID
-router.delete('/removeorg/:id', (req, res, next) => {
-    organizationdata.findOneAndRemove({ organizationID: req.params.id}, (error, data) => {
-        if (error) {
-          return next(error);
-        } else {
-           res.status(200).json({
-             msg: data
-           });
+//PUT update org by orgID
+router.put("/:id", (req, res, next) => {
+    organizationdata.findOneAndUpdate(
+        { organizationID: req.params.id },
+        req.body,
+        (error, data) => {
+            if (error) {
+                return next(error);
+            } else {
+                res.json(data);
+            }
         }
-     }) ;
+    );
+});
+
+//add serviceID to array
+router.put('/addservicefororg/:id', (req, res, next) => {
+    organizationdata.findOneAndUpdate({ organizationID: req.params.id, 
+        servicesProvided: {$not: { $in: req.body.serviceID }} }, 
+        { $addToSet: { servicesProvided : req.body.serviceID} }, 
+        (error, data) => {
+            if (error) {
+                return next(error);
+                } else if (data === null) {
+                    res.status(409).send('Service is already added or organization does not exist');
+                } else {
+                res.send('Service for Client is added via PUT');
+                console.log('Service for Client successfully added!', data)
+                }
+      })
 });
 
 // delete services in org
 router.put('/removeservice/:id', (req, res, next) => {
-    organizationdata.findOneAndUpdate({ organizationID: req.params.id }, 
+    organizationdata.findOneAndUpdate({ organizationID: req.params.id,
+        servicesProvided : {$in: req.body.serviceID} }, 
         { $pull: { servicesProvided : req.body.serviceID} }, 
         (error, data) => {
             if (error) {
             return next(error);
+        } else if (data === null) {
+            res.status(409).send('Service has already been removed or organization does not exist');
             } else {
             res.send('Service is removed via PUT');
             console.log('Service successfully removed!', data)
@@ -153,19 +161,19 @@ router.put('/removeservice/:id', (req, res, next) => {
       })
 });
 
-//add serviceID to array
-router.put('/addservicefororg/:id', (req, res, next) => {
-    organizationdata.findOneAndUpdate({ organizationID: req.params.id }, 
-        { $addToSet: { servicesProvided : req.body.serviceID} }, 
-        (error, data) => {
-            if (error) {
-            return next(error);
-            } else {
-            res.send('Service for Organization is added via PUT');
-            console.log('Service for Organization successfully added!', data)
-            }
-      })
+//delete organization by ID
+router.delete('/removeorg/:id', (req, res, next) => {
+    organizationdata.findOneAndRemove({ organizationID: req.params.id}, (error, data) => {
+        if (error) {
+          return next(error);
+        } else if (data === null) {
+            res.status(404).send('Organization not found');
+        } else {
+           res.status(200).json({
+             msg: data
+           });
+        }
+     }) ;
 });
-
 
 module.exports = router;
