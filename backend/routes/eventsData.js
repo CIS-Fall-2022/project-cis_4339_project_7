@@ -16,6 +16,8 @@ router.get("/", (req, res, next) => {
         (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('No events found');
             } else {
                 res.json(data);
             }
@@ -29,6 +31,8 @@ router.get("/id/:id", (req, res, next) => {
         (error, data) => {
         if (error) {
             return next(error)
+        } else if (data.length < 1) {
+            res.status(404).send('No events found');
         } else {
             res.json(data)
         }
@@ -60,7 +64,7 @@ router.get("/search/", (req, res, next) => {
             if (error) {
                 return next(error);
             } else if (data.length < 1) {
-                res.status(404).send('Client not found');
+                res.status(404).send('Event not found');
             } else {
                 res.json(data);
             }
@@ -106,6 +110,8 @@ router.get("/eventdata1/:id", (req, res, next) => {
     ] , (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('No Clients found for event');
             } else {
                 res.json(data);
             }
@@ -153,6 +159,8 @@ router.get("/eventdata2/:id", (req, res, next) => {
     ] , (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('No services found for event');
             } else {
                 res.json(data);
             }
@@ -241,6 +249,8 @@ router.put("/:id", (req, res, next) => {
         (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data.length === null) {
+                res.status(404).send('Event not found');
             } else {
                 res.json(data);
             }
@@ -325,6 +335,8 @@ router.delete('/eventdata/:id', (req, res, next) => {
     eventdata.findOneAndRemove({ eventID: req.params.id}, (error, data) => {
         if (error, send) { // reference https://stackoverflow.com/questions/30417389/the-findoneandremove-and-findoneandupdate-dont-work-as-intended
           return next(error);
+        } else if (data.length === null) {
+            res.status(404).send('Event not found or has already been deleted');
         } else {
            res.status(200).json({
              msg: data

@@ -17,7 +17,9 @@ https://stackoverflow.com/questions/37202585/check-if-value-exists-in-array-fiel
 
 How to use an aggregate pipeline:
 https://medium.com/fasal-engineering/fetching-data-from-different-collections-via-mongodb-aggregation-operations-with-examples-a273f24bfff0
- */
+
+//reference https://www.mongodb.com/docs/manual/reference/operator/query/regex/
+*/
 
 const express = require("express");
 const mongoose = require("mongoose");
