@@ -227,7 +227,7 @@ router.get("/search/", (req, res, next) => {
 
 
 
-//POST
+//POST adds events to event collection
 router.post("/event", (req, res, next) => { 
     eventdata.create( 
         req.body, 
@@ -241,7 +241,7 @@ router.post("/event", (req, res, next) => {
     );
 });
 
-//PUT
+//PUT that updates based on id in parameter url. 
 router.put("/:id", (req, res, next) => {
     eventdata.findOneAndUpdate(
         { eventID: req.params.id },
@@ -313,6 +313,8 @@ router.put('/addattendees/:id', (req, res, next) => {
       })
 });
 
+// PUT that
+// Removes attendees from attendees array in eventData collection
 router.put('/removeattendees/:id', (req, res, next) => {
     eventdata.findOneAndUpdate({ eventID: req.params.id, 
         attendees : {$in: req.body.clientID} }, 
