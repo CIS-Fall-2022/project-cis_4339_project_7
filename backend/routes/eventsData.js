@@ -331,12 +331,11 @@ router.put('/removeattendees/:id', (req, res, next) => {
 
 
 /// DELETE BY ID
+
 router.delete('/eventdata/:id', (req, res, next) => {
-    eventdata.findOneAndRemove({ eventID: req.params.id}, (error, data) => {
-        if (error, send) { // reference https://stackoverflow.com/questions/30417389/the-findoneandremove-and-findoneandupdate-dont-work-as-intended
+    eventdata.findOneAndRemove({ _id: req.params.id}, (error, data) => {
+        if (error) { // reference https://stackoverflow.com/questions/30417389/the-findoneandremove-and-findoneandupdate-dont-work-as-intended
           return next(error);
-        } else if (data.length === null) {
-            res.status(404).send('Event not found or has already been deleted');
         } else {
            res.status(200).json({
              msg: data
@@ -344,6 +343,5 @@ router.delete('/eventdata/:id', (req, res, next) => {
         }
       });
 });
-
 
 module.exports = router;
