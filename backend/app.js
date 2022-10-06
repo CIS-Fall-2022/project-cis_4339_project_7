@@ -1,3 +1,24 @@
+/* References used
+
+For MongoDB Documentation:
+https://www.mongodb.com/docs/manual/introduction/
+
+For Mongoose documentation:
+https://mongoosejs.com/docs/guide.html
+
+For JavaScript Documentation:
+https://www.w3schools.com/js/
+
+For error status codes:
+https://metamug.com/article/status-codes-for-rest-api.html#:~:text=409%20Conflict%20%2D%20Client%20attempting%20to,without%20the%20Content%2DLength%20Header.
+
+Method to check for element in array:
+https://stackoverflow.com/questions/37202585/check-if-value-exists-in-array-field-in-mongodb
+
+How to use an aggregate pipeline:
+https://medium.com/fasal-engineering/fetching-data-from-different-collections-via-mongodb-aggregation-operations-with-examples-a273f24bfff0
+ */
+
 const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan"); //better debugging
