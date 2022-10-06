@@ -33,7 +33,7 @@ router.get("/id/:id", (req, res, next) => {
 });
 
 
-// delete by id
+// DELETES SERVICES BY ID
 
 router.delete('/servicedata/:id', (req, res, next) => {
     servicedata.findOneAndRemove({ serviceID: req.params.id}, (error, data) => {
@@ -65,7 +65,7 @@ router.post("/createservice", (req, res, next) => {
     );
 });
 
-//PUT
+//PUT - UPDATES BY ID - PUT SERVICE ID IN URL
 router.put("/:id", (req, res, next) => {
     servicedata.findOneAndUpdate(
         { serviceID: req.params.id },
