@@ -37,3 +37,27 @@ https://stackoverflow.com/questions/37202585/check-if-value-exists-in-array-fiel
 
 How to use an aggregate pipeline:
 https://medium.com/fasal-engineering/fetching-data-from-different-collections-via-mongodb-aggregation-operations-with-examples-a273f24bfff0
+
+
+FindOneAndUpdate fixing:
+https://stackoverflow.com/questions/30417389/the-findoneandremove-and-findoneandupdate-dont-work-as-intended
+
+How to use $pull correctly:
+https://stackoverflow.com/questions/15625633/nodejs-mongoose-mongodb-pull-from-array-not-working
+
+How to use FindOneAndUpdate documentation:
+https://www.mongodb.com/docs/manual/reference/method/db.collection.findOneAndUpdate/
+
+What is $regex:
+https://www.mongodb.com/docs/manual/reference/operator/query/regex/
+
+Get current date and date from 2 months ago:
+https://stackoverflow.com/questions/7937233/how-do-i-calculate-the-date-in-javascript-three-months-prior-to-today
+
+Mongoose errors regarding objectID:
+https://stackoverflow.com/questions/17223517/mongoose-casterror-cast-to-objectid-failed-for-value-object-object-at-path
+
+
+
+
+
