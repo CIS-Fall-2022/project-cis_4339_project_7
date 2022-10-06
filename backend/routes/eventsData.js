@@ -4,8 +4,8 @@ const router = express.Router();
 
 //importing data model schemas
 let { eventdata } = require("../models/models"); 
-let { servicedata } = require("../models/models"); 
-let { primarydata } = require("../models/models"); 
+//let { servicedata } = require("../models/models"); 
+//let { primarydata } = require("../models/models"); 
 
 
 
