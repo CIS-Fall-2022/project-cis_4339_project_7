@@ -331,7 +331,6 @@ router.put('/removeattendees/:id', (req, res, next) => {
 
 
 /// DELETE BY ID
-
 router.delete('/eventdata/:id', (req, res, next) => {
     eventdata.findOneAndRemove({ _id: req.params.id}, (error, data) => {
         if (error) { // reference https://stackoverflow.com/questions/30417389/the-findoneandremove-and-findoneandupdate-dont-work-as-intended
