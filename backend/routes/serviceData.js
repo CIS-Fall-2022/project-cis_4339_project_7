@@ -10,6 +10,8 @@ router.get("/", (req, res, next) => {
         (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('No services found');
             } else {
                 res.json(data);
             }
@@ -19,9 +21,11 @@ router.get("/", (req, res, next) => {
 
 //GET single entry by ID
 router.get("/id/:id", (req, res, next) => { 
-    servicedata.find({ _id: req.params.id }, (error, data) => {
+    servicedata.find({ serviceID: req.params.id }, (error, data) => {
         if (error) {
-            return next(error)
+            return next(error);
+        } else if (data.length < 1) {
+            res.status(404).send('Service not found');
         } else {
             res.json(data)
         }
@@ -32,10 +36,11 @@ router.get("/id/:id", (req, res, next) => {
 // delete by id
 
 router.delete('/servicedata/:id', (req, res, next) => {
-
     servicedata.findOneAndRemove({ serviceID: req.params.id}, (error, data) => {
         if (error) {
           return next(error);
+        } else if (data === null) {
+            res.status(404).send('Service not found');
         } else {
            res.status(200).json({
              msg: data
@@ -63,11 +68,13 @@ router.post("/createservice", (req, res, next) => {
 //PUT
 router.put("/:id", (req, res, next) => {
     servicedata.findOneAndUpdate(
-        { _id: req.params.id },
+        { serviceID: req.params.id },
         req.body,
         (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data === null) {
+                res.status(404).send('Service not found');
             } else {
                 res.json(data);
             }

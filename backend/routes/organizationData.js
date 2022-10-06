@@ -28,6 +28,8 @@ router.get("/", (req, res, next) => {
         (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('No organizations found');
             } else {
                 res.json(data);
             }
@@ -39,9 +41,11 @@ router.get("/", (req, res, next) => {
 router.get("/id/:id", (req, res, next) => { 
     organizationdata.find({ organizationID: req.params.id }, (error, data) => {
         if (error) {
-            return next(error)
+            return next(error);
+        } else if (data.length < 1) {
+            res.status(404).send('Organization not found');
         } else {
-            res.json(data)
+            res.json(data);
         }
     })
 });
@@ -62,21 +66,17 @@ router.get("/services/:id", (req, res, next) => {
             as: 'services'
         }}, //{$unwind: '$services'}, not using it but it flattens the results
         // $addFields can create an alias for what you joined the tables "as"
-        { $addFields: {
-            "service_name": "$services.serviceName"
-        }},
+        
         // $project acts like a filter
         // you can pick which fields you want to show from the aggregate pipeline
-        { $project: {
-            organizationID: 1,
-            organizationName: 1,
-            service_name: 1
-        }}
+        
         // can use $count to count how many attendees are signed up for each event
         //this number would be useful for the frontend graph and table we need to create
     ] , (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('No services found');
             } else {
                 res.json(data);
             }
@@ -91,6 +91,8 @@ router.get("/events/:id", (req, res, next) => {
         (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('No events found');
             } else {
                 res.json(data);
             }
@@ -105,6 +107,8 @@ router.get("/clients/:id", (req, res, next) => {
         (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('No clients found');
             } else {
                 res.json(data);
             }
@@ -120,6 +124,8 @@ router.put("/:id", (req, res, next) => {
         (error, data) => {
             if (error) {
                 return next(error);
+            } else if (data === null) {
+                res.status(404).send('Organization not found');
             } else {
                 res.json(data);
             }

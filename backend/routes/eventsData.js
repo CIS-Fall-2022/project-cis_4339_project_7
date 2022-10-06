@@ -82,6 +82,7 @@ router.get("/eventdata1/:id", (req, res, next) => {
 
 
 
+
 // GET endpoint that will search services attached to an event
 router.get("/eventdata2/:id", (req, res, next) => { 
     eventdata.aggregate([
@@ -128,38 +129,35 @@ router.get("/eventdata2/:id", (req, res, next) => {
 
 
 
-// GET this retrieves a list of clients attached to an event
-router.get("/total/:id", (req, res, next) => { 
+router.get("/last2months", (req, res, next) => {
+    var pastDate = new Date();
+    pastDate.setMonth(pastDate.getMonth() - 2);
     eventdata.aggregate([
-        // $match finds an exact match base on the parameters that you set
-        // here we have look at the req.body.clientID
-        { $match: {
-            eventID: req.params.id
+        {$match:{
+            date :{
+
+                $gte: pastDate,
+                $lt: new Date()
+            }
         }},
-        // $lookup is like a join in SQL
-        { $lookup: {
-            from: 'primaryData',
-            localField: 'attendees',
-            foreignField: 'clientID',
-            as: 'clients'
-        }}, 
-        { $unwind: '$clients'},
-        { $project: {
-            _id : 0,
-            number_of_clients : {$size: '$attendees'}}},
-        { $sort : { "date": -1 }}
-    ] , (error, data) => {
-            if (error) {
-                return next(error);
-            } else {
-                res.json(data);
+        {
+            $project: {
+                _id: 0,
+                eventName: 1,
+                date: 1,
+                number_of_clients : {$size: '$attendees'}
             }
         }
-    ).sort({ 'updatedAt': -1 }).limit(10);
+    ], (error, data) => {
+        if (error) {
+            return next(error);
+        } else if (data.length < 1) {
+            res.status(404).send('No events in the past 2 months');
+        } else {
+            res.json(data);
+        }
+    }).sort({ 'updatedAt': -1 }).limit(10);
 });
-
-
-
 
 //GET entries based on search query
 //Ex: '...?eventName=Food&searchBy=name' 
@@ -214,8 +212,6 @@ router.put("/:id", (req, res, next) => {
         }
     );
 });
-
-
 
 
 
