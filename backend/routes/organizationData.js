@@ -5,6 +5,7 @@ const router = express.Router();
 let { organizationdata } = require("../models/models"); 
 let {eventdata} = require("../models/models");
 let { primarydata } = require("../models/models"); 
+let { ORG_ID } = require("../app.js")
 
 //Post create new orgs
 router.post("/createorg", (req, res, next) => { 
@@ -38,8 +39,8 @@ router.get("/", (req, res, next) => {
 });
 
 //GET single entry by ID
-router.get("/id/:id", (req, res, next) => { 
-    organizationdata.find({ organizationID: req.params.id }, (error, data) => {
+router.get("/id", (req, res, next) => { 
+    organizationdata.find({ organizationID: ORG_ID }, (error, data) => {
         if (error) {
             return next(error);
         } else if (data.length < 1) {

@@ -63,8 +63,9 @@ mongoose
   });
 
 //declare port number for the api
-const PORT = process.env.PORT || 27017;
-
+const PORT = process.env.PORT1 || 27017;
+const ORG_ID = process.env.ORG_ID3;
+module.exports = {ORG_ID}
 //setup
 app.use(express.json());
 app.use(morgan("dev"));
@@ -83,6 +84,7 @@ app.use('/organizationData', organizationDataRoute);
 
 app.listen(PORT, () => {
   console.log("Server started listening on port : ", PORT);
+  console.log(ORG_ID);
 });
 
 

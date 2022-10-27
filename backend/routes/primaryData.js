@@ -4,6 +4,7 @@ const router = express.Router();
 //importing data model schemas
 let { primarydata } = require("../models/models"); 
 let { eventdata } = require("../models/models");
+let { ORG_ID } = require("../app.js")
 
 // CRUD OPS
 
@@ -31,6 +32,7 @@ router.post("/", (req, res, next) => {
 // GET all entries
 router.get("/", (req, res, next) => { 
     primarydata.find( 
+        {clientOfOrgs: {$in: ORG_ID} },
         (error, data) => {
             if (error) {
                 return next(error);
@@ -46,7 +48,8 @@ router.get("/", (req, res, next) => {
 // GET single entry by ID
 router.get("/id/:id", (req, res, next) => {
     primarydata.findOne( 
-        { clientID: req.params.id }, 
+        { clientID: req.params.id,
+        clientOfOrgs: {$in: ORG_ID} }, 
         (error, data) => {
             if (error) {
                 return next(error);
@@ -119,25 +122,7 @@ router.get("/listoforgforclientbyid/:id", (req, res, next) => {
             localField: 'clientOfOrgs',
             foreignField: 'organizationID',
             as: 'organizations'
-        }}, 
-        /*
-        // keeping this code for future reference
-        {$unwind: '$organizations'}, // not using it but it flattens the results
-         $addFields can create an alias for what you joined the tables "as"
-        { $addFields: {
-            "organization_name": "$organizations.organizationName"
-        }},
-        // $project acts like a filter
-        // you can pick which fields you want to show from the aggregate pipeline
-        { $project: {
-            clientID: 1,
-            firstName: 1,
-            lastName: 1,
-            organization_name: 1
         }}
-        //can use $count to count how many attendees are signed up for each event
-        //this number would be useful for the frontend graph and table we need to create
-        */
     ] , (error, data) => {
             if (error) {
                 return next(error);
