@@ -7,9 +7,12 @@ let {eventdata} = require("../models/models");
 let { primarydata } = require("../models/models"); 
 let { ORG_ID } = require("../app.js")
 
+
+
 //Post create new orgs
 router.post("/createorg", (req, res, next) => { 
 
+//delete
 //POST
     organizationdata.create( 
         req.body, 
@@ -23,6 +26,7 @@ router.post("/createorg", (req, res, next) => {
     );
 });
 
+//delete
 //GET all entries
 router.get("/", (req, res, next) => { 
     organizationdata.find( 
@@ -38,6 +42,7 @@ router.get("/", (req, res, next) => {
     ).sort({ 'updatedAt': -1 }).limit(10);
 });
 
+//delete
 //GET single entry by ID
 router.get("/id", (req, res, next) => { 
     organizationdata.find({ organizationID: ORG_ID }, (error, data) => {
@@ -51,6 +56,7 @@ router.get("/id", (req, res, next) => {
     })
 });
 
+//delete
 //GET services provided
 // reference https://medium.com/fasal-engineering/fetching-data-from-different-collections-via-mongodb-aggregation-operations-with-examples-a273f24bfff0
 
@@ -87,11 +93,12 @@ router.get("/services/:id", (req, res, next) => {
     ).sort({ 'updatedAt': -1 }).limit(10);
 });
 
+///KEEP
 //GET all events for organization
 // reference https://stackoverflow.com/questions/37202585/check-if-value-exists-in-array-field-in-mongodb
-router.get("/events/:id", (req, res, next) => { 
+router.get("/events", (req, res, next) => { 
     eventdata.find( 
-        { organizations: req.params.id }, 
+        { organizations: ORG_ID }, 
         (error, data) => {
             if (error) {
                 return next(error);
@@ -104,6 +111,7 @@ router.get("/events/:id", (req, res, next) => {
     );
 });
 
+//delete
 //GET clients for organization
 //https://stackoverflow.com/questions/37202585/check-if-value-exists-in-array-field-in-mongodb
 router.get("/clients/:id", (req, res, next) => { 
@@ -121,6 +129,7 @@ router.get("/clients/:id", (req, res, next) => {
     );
 });
 
+//delete
 //PUT update org by orgID
 router.put("/:id", (req, res, next) => {
     organizationdata.findOneAndUpdate(
@@ -138,6 +147,7 @@ router.put("/:id", (req, res, next) => {
     );
 });
 
+//delete
 //add serviceID to array
 // reference https://www.mongodb.com/docs/manual/reference/method/db.collection.findOneAndUpdate/
 router.put('/addservicefororg/:id', (req, res, next) => {
@@ -156,6 +166,7 @@ router.put('/addservicefororg/:id', (req, res, next) => {
       })
 });
 
+//delete
 // delete services in org
 // reference https://www.mongodb.com/docs/manual/reference/method/db.collection.findOneAndUpdate/
 router.put('/removeservice/:id', (req, res, next) => {
@@ -174,6 +185,7 @@ router.put('/removeservice/:id', (req, res, next) => {
       })
 });
 
+//delete
 //delete organization by ID
 // reference https://www.mongodb.com/docs/manual/reference/method/db.collection.findOneAndUpdate/
 router.delete('/removeorg/:id', (req, res, next) => {

@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 //const  ObjectID = require('mongodb').ObjectId;
 
-
+//delete
 //collection for serviceData 
 let serviceDataSchema = new Schema({ 
     _id: {type: String, default: uuid.v1}, 
@@ -43,14 +43,14 @@ let primaryDataSchema = new Schema({
     },
     lastName: {
         type: String,
-        required: true
+        require: true
     },
     email: {
         type: String
     },
     phoneNumbers: {
         type: Array,
-        required: true
+        require: true
     },
     address: {
         line1: {
@@ -61,7 +61,7 @@ let primaryDataSchema = new Schema({
         },
         city: {
             type: String,
-            required: true
+            require: true
         },
         county: {
             type: String,
@@ -70,11 +70,9 @@ let primaryDataSchema = new Schema({
             type: String,
         }
     },
-    servicesNeeded: {
-        type: [String] // references serviceID in serviceData collection
-    },
     clientOfOrgs: {
-        type: [String] // references organizationID in organizationData collection
+        type: String, // references organizationID in organizationData collection
+        require: true 
     }}, 
 {
     collection: 'primaryData',
@@ -91,10 +89,8 @@ let organizationDataSchema = new Schema({
     },
     organizationName: {
         type: String, 
-        require: true
-    },
-    servicesProvided: {
-        type: [String] // references serviceID in serviceData collection
+        require: true,
+        unique: true
     }
     },{
         collection: 'organizationData',
@@ -114,10 +110,11 @@ let eventDataSchema = new Schema({
         require: true
     },
     organizations: {
-        type: [String] // references organizationID in organizationData collection
+        type: String, // references organizationID in organizationData collection
+        require: true
     },
     services: {
-        type: [String] // references serviceID in serviceData collection
+        type: [String]
     },
     date: {
         type: Date,

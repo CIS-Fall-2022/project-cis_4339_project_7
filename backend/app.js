@@ -64,7 +64,7 @@ mongoose
 
 //declare port number for the api
 const PORT = process.env.PORT1 || 27017;
-const ORG_ID = process.env.ORG_ID3;
+const ORG_ID = process.env.ORG_ID1;
 module.exports = {ORG_ID}
 //setup
 app.use(express.json());

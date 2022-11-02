@@ -345,4 +345,21 @@ router.delete('/eventdata/:id', (req, res, next) => {
       });
 });
 
+//GET all events for organization
+// reference https://stackoverflow.com/questions/37202585/check-if-value-exists-in-array-field-in-mongodb
+router.get("/events", (req, res, next) => { 
+    eventdata.find( 
+        { organizations: ORG_ID }, 
+        (error, data) => {
+            if (error) {
+                return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('No events found');
+            } else {
+                res.json(data);
+            }
+        }
+    );
+});
+
 module.exports = router;

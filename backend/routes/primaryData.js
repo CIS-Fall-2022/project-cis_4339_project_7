@@ -11,9 +11,18 @@ let { ORG_ID } = require("../app.js")
 // CREATE OPS POST Method
 
 //POST create new client
+
 router.post("/", (req, res, next) => { 
-    primarydata.create( 
-        req.body,
+    primarydata.create(
+        {   clientID : req.body.clientID,
+            firstName : req.body.firstName,
+            middleName : req.body.middleName,
+            lastName : req.body.lastName,
+            email : req.body.email,
+            phoneNumbers : req.body.phoneNumbers,
+            address : req.body.address,
+            clientOfOrgs : ORG_ID
+        },
         (error, data) => { 
             if (error) {
                 return next(error);
@@ -32,7 +41,7 @@ router.post("/", (req, res, next) => {
 // GET all entries
 router.get("/", (req, res, next) => { 
     primarydata.find( 
-        {clientOfOrgs: {$in: ORG_ID} },
+        {clientOfOrgs: ORG_ID},
         (error, data) => {
             if (error) {
                 return next(error);
@@ -49,7 +58,7 @@ router.get("/", (req, res, next) => {
 router.get("/id/:id", (req, res, next) => {
     primarydata.findOne( 
         { clientID: req.params.id,
-        clientOfOrgs: {$in: ORG_ID} }, 
+        clientOfOrgs: ORG_ID}, 
         (error, data) => {
             if (error) {
                 return next(error);
@@ -70,11 +79,13 @@ router.get("/search/", (req, res, next) => {
     if (req.query["searchBy"] === 'name' && 
     (req.query["firstName"].length >= 1 || req.query["lastName"].length >= 1)) {
         dbQuery = { firstName: { $regex: `^${req.query["firstName"]}`,
-         $options: "i" }, lastName: { $regex: `^${req.query["lastName"]}`, $options: "i" } }
+         $options: "i" }, lastName: { $regex: `^${req.query["lastName"]}`, $options: "i" }, 
+         clientOfOrgs: ORG_ID}
     } else if (req.query["searchBy"] === 'number' && req.query["phoneNumbers"].length >= 1) {
         dbQuery = {
             "phoneNumbers": { $regex: `^${req.query["phoneNumbers"]}`, 
-            $options: "i" }
+            $options: "i" },
+            clientOfOrgs: ORG_ID
         }
     };
     primarydata.find( 
@@ -91,10 +102,12 @@ router.get("/search/", (req, res, next) => {
     );
 });
 
+//MAY NOT NEED !!!!
 // GET events for a single client
 router.get("/events/:id", (req, res, next) => { 
     eventdata.find( 
-        { attendees: req.params.id }, 
+        {   attendees: req.params.id,
+            clientOfOrgs: ORG_ID}, 
         (error, data) => {
             if (error) {
                 return next(error);
@@ -107,14 +120,14 @@ router.get("/events/:id", (req, res, next) => {
     );
 });
 
-
+/// Delete this? yep!
 // GET this retrieves a list of organizations by name for a specified client
 router.get("/listoforgforclientbyid/:id", (req, res, next) => { 
     primarydata.aggregate([
         // $match finds an exact match base on the parameters that you set
         // here we have look at the req.body.clientID
         { $match: {
-            clientID: req.params.id
+            clientID: req.params.id,
         }},
         // $lookup is like a join in SQL
         { $lookup: {
@@ -135,6 +148,8 @@ router.get("/listoforgforclientbyid/:id", (req, res, next) => {
     ).sort({ 'updatedAt': -1 }).limit(10);
 });
 
+/////may need to delete//////
+/*
 // GET gets list of service names for a client by clientID
 router.get("/listofsrvcsforclientbyid/:id", (req, res, next) => { 
     primarydata.aggregate([
@@ -163,7 +178,7 @@ router.get("/listofsrvcsforclientbyid/:id", (req, res, next) => {
         }
     ).sort({ 'updatedAt': -1 }).limit(10);
 });
-
+*/
 // UPDATE OPS PUT Method
 
 // PUT update (make sure req body doesn't have the id)
@@ -182,13 +197,13 @@ router.put("/updateclient/:id", (req, res, next) => {
         }
     );
 });
-
+//DELETE this
 // PUT this updates the clientOfOrgs array
 // Adds a new organization to the list that the client belongs to
 router.put('/addclienttoorg/:id', (req, res, next) => {
     primarydata.findOneAndUpdate({ clientID: req.params.id, 
-        clientOfOrgs: {$not: {$in: req.body.organizationID}} }, 
-        { $addToSet: { clientOfOrgs : req.body.organizationID} },
+        clientOfOrgs: {$not: {$in: ORG_ID}} }, 
+        { $addToSet: { clientOfOrgs : ORG_ID} },
         (error, data) => {
             if (error) {
             return next(error);
@@ -200,13 +215,13 @@ router.put('/addclienttoorg/:id', (req, res, next) => {
             }
       })
 });
-
+//DELETE this
 // PUT this updates the clientOfOrgs array
 // Removes a specified organization from the client's list
 router.put('/removeclientorg/:id', (req, res, next) => {
     primarydata.findOneAndUpdate({ clientID: req.params.id,
         clientOfOrgs: {$in: req.body.organizationID}}, 
-        { $pull: { clientOfOrgs : req.body.organizationID} }, 
+        { $pull: { clientOfOrgs: {$in: ORG_ID}} }, 
         (error, data) => {
             if (error) {
             return next(error);
@@ -218,7 +233,7 @@ router.put('/removeclientorg/:id', (req, res, next) => {
             }
       })
 });
-
+// DELETE
 // PUT this updates the servicesNeeded array
 // Adds a new service to the client's list
 router.put('/addserviceforclient/:id', (req, res, next) => {
@@ -237,6 +252,7 @@ router.put('/addserviceforclient/:id', (req, res, next) => {
       })
 });
 
+//DELETE
 // PUT this updates the servicesNeeded array
 // Removes a specified service from the client's list
 router.put('/removeserviceforclient/:id', (req, res, next) => {
