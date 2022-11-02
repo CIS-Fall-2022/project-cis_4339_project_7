@@ -6,13 +6,15 @@ const router = express.Router();
 let { eventdata } = require("../models/models"); 
 //let { servicedata } = require("../models/models"); 
 //let { primarydata } = require("../models/models"); 
+let { ORG_ID } = require("../app.js")
 
 
 
-
-//GET all entries
-router.get("/", (req, res, next) => { 
+//GET all events for organization
+// reference https://stackoverflow.com/questions/37202585/check-if-value-exists-in-array-field-in-mongodb
+router.get("/events", (req, res, next) => { 
     eventdata.find( 
+        { organizations: ORG_ID }, 
         (error, data) => {
             if (error) {
                 return next(error);
@@ -22,12 +24,15 @@ router.get("/", (req, res, next) => {
                 res.json(data);
             }
         }
-    ).sort({ 'updatedAt': -1 }).limit(10);
+    );
 });
 
+//maybe keep?
 //GET SINGLE ENTRY BY ID
 router.get("/id/:id", (req, res, next) => { 
-    eventdata.find({ eventID: req.params.id }, 
+    eventdata.find({ eventID: req.params.id,
+        organizations : ORG_ID
+     }, 
         (error, data) => {
         if (error) {
             return next(error)
@@ -40,8 +45,7 @@ router.get("/id/:id", (req, res, next) => {
 });
 
 // GET entries based on search query
-// Ex: '...?firstName=Bob&lastName=&searchBy=name' 
-// Ex: '...?phoneNumbers=555-555-8888&searchBy=number'
+
 router.get("/search/", (req, res, next) => { 
     let dbQuery = "";
     if (req.query["searchBy"] === 'name' && req.query["eventName"].length >= 1) {
@@ -49,14 +53,16 @@ router.get("/search/", (req, res, next) => {
         dbQuery = { 
             
         eventName: { $regex: `^${req.query["eventName"]}`, $options: "i" }, 
-         
+         organizations : ORG_ID
          //description: { $regex: `^${req.query["description"]}`, $options: "i" } 
         }
     } else if (req.query["searchBy"] === 'description' && req.query["description"].length >= 1) {
 
         dbQuery = {
-            "description": { $regex: `^${req.query["description"]}`, $options: "i" }
+            "description": { $regex: `^${req.query["description"]}`, $options: "i" },
+            organizations : ORG_ID
         }
+        // add services search field
     };
     eventdata.find( 
         dbQuery, 
@@ -72,7 +78,7 @@ router.get("/search/", (req, res, next) => {
     );
 });
 
-
+//keep
 // GET this retrieves a list of clients attached to an event
 router.get("/eventdata1/:id", (req, res, next) => { 
     eventdata.aggregate([
@@ -121,7 +127,7 @@ router.get("/eventdata1/:id", (req, res, next) => {
 
 
 
-
+//delete
 // GET endpoint that will search services attached to an event
 router.get("/eventdata2/:id", (req, res, next) => { 
     eventdata.aggregate([
@@ -168,7 +174,7 @@ router.get("/eventdata2/:id", (req, res, next) => {
     ).sort({ 'updatedAt': -1 }).limit(10);
 });
 
-
+//keep
 // Shows how many clients signed up for an event by the last 2 months
 router.get("/last2months", (req, res, next) => {
     var pastDate = new Date(); // reference https://stackoverflow.com/questions/7937233/how-do-i-calculate-the-date-in-javascript-three-months-prior-to-today
@@ -179,7 +185,8 @@ router.get("/last2months", (req, res, next) => {
 
                 $gte: pastDate, //furthest date is 2 months from today
                 $lt: new Date() // today is shown as Date()
-            }
+            },
+            organizations : ORG_ID
         }},
         {
             $project: {
@@ -201,7 +208,7 @@ router.get("/last2months", (req, res, next) => {
 });
 
 
-
+//magic
 //GET entries based on search query
 //Ex: '...?eventName=Food&searchBy=name' 
 router.get("/search/", (req, res, next) => { 
@@ -226,11 +233,11 @@ router.get("/search/", (req, res, next) => {
 });
 
 
-
+//keep
 //POST adds events to event collection
 router.post("/event", (req, res, next) => { 
     eventdata.create( 
-        req.body, 
+        req.body, //use the post method on primaryData for how to do
         (error, data) => { 
             if (error) {
                 return next(error);
@@ -241,6 +248,7 @@ router.post("/event", (req, res, next) => {
     );
 });
 
+//keep
 //PUT that updates based on id in parameter url. 
 router.put("/:id", (req, res, next) => {
     eventdata.findOneAndUpdate(
@@ -258,7 +266,7 @@ router.put("/:id", (req, res, next) => {
     );
 });
 
-
+//keep but need to fix. the serviceData table is no long a thing so it sould just be adding strings (what the service name is) to the array
 // PUT that adds serviceIDs to events
 router.put('/addservices/:id', (req, res, next) => {
     eventdata.findOneAndUpdate({ eventID: req.params.id, // reference https://www.mongodb.com/docs/manual/reference/method/db.collection.findOneAndUpdate/
@@ -276,7 +284,7 @@ router.put('/addservices/:id', (req, res, next) => {
 });
 
 
-
+//this needs fixed too
 // PUT this updates the attendees array
 // Removes a specified organization from the client's list
 router.put('/removeservices/:id', (req, res, next) => {
@@ -296,7 +304,7 @@ router.put('/removeservices/:id', (req, res, next) => {
 
 
 
-
+//keep
 // PUT that adds clientIDs to events
 router.put('/addattendees/:id', (req, res, next) => {
     eventdata.findOneAndUpdate({ eventID: req.params.id, 
@@ -312,7 +320,7 @@ router.put('/addattendees/:id', (req, res, next) => {
             }
       })
 });
-
+//keep
 // PUT that
 // Removes attendees from attendees array in eventData collection
 router.put('/removeattendees/:id', (req, res, next) => {
@@ -331,7 +339,7 @@ router.put('/removeattendees/:id', (req, res, next) => {
 });
 
 
-
+//keep
 /// DELETE BY ID
 router.delete('/eventdata/:id', (req, res, next) => {
     eventdata.findOneAndRemove({ _id: req.params.id}, (error, data) => {
@@ -343,23 +351,6 @@ router.delete('/eventdata/:id', (req, res, next) => {
            });
         }
       });
-});
-
-//GET all events for organization
-// reference https://stackoverflow.com/questions/37202585/check-if-value-exists-in-array-field-in-mongodb
-router.get("/events", (req, res, next) => { 
-    eventdata.find( 
-        { organizations: ORG_ID }, 
-        (error, data) => {
-            if (error) {
-                return next(error);
-            } else if (data.length < 1) {
-                res.status(404).send('No events found');
-            } else {
-                res.json(data);
-            }
-        }
-    );
 });
 
 module.exports = router;

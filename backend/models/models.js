@@ -114,11 +114,12 @@ let eventDataSchema = new Schema({
         require: true
     },
     services: {
-        type: [String]
+        type: Array,
+        require: true
     },
     date: {
         type: Date,
-        required: true
+        require: true
     },
     address: {
         line1: {
