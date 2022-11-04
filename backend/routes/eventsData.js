@@ -27,25 +27,27 @@ router.get("/events", (req, res, next) => {
     );
 });
 
+
 //maybe keep?
 //GET SINGLE ENTRY BY ID
 router.get("/id/:id", (req, res, next) => { 
     eventdata.find({ eventID: req.params.id,
-        organizations : ORG_ID
+        organizations : ORG_ID //references back to ORG_ID variable in app.js
      }, 
         (error, data) => {
-        if (error) {
+        if (error) { //error handling
             return next(error)
         } else if (data.length < 1) {
             res.status(404).send('No events found');
         } else {
-            res.json(data)
+            res.json(data) // if no error, then respond with json data
         }
     })
 });
 
-// GET entries based on search query
 
+
+// GET entries based on search query
 router.get("/search/", (req, res, next) => { 
     let dbQuery = "";
     if (req.query["searchBy"] === 'name' && req.query["eventName"].length >= 1) {
@@ -62,30 +64,35 @@ router.get("/search/", (req, res, next) => {
             "description": { $regex: `^${req.query["description"]}`, $options: "i" },
             organizations : ORG_ID
         }
-        // add services search field
+    } else if (req.query["searchBy"] === 'services' && req.query["serviceID"].length >= 1) {
+
+        dbQuery = {
+            "services": { $regex: `^${req.query["serviceID"]}`, $options: "i" },
+            organizations : ORG_ID
+        }
     };
     eventdata.find( 
         dbQuery, 
         (error, data) => { 
             if (error) {
-                return next(error);
+                return next(error); // error handling
             } else if (data.length < 1) {
-                res.status(404).send('Event not found');
+                res.status(404).send('Event not found'); // respond with no event found if there is nothing matching
             } else {
-                res.json(data);
+                res.json(data); // if no error, then respond with json data
             }
         }
     );
 });
 
-//keep
-// GET this retrieves a list of clients attached to an event
+
+// GET this retrieves a list of clients attached to an event matching to an organization
 router.get("/eventdata1/:id", (req, res, next) => { 
     eventdata.aggregate([
         // $match finds an exact match base on the parameters that you set
         // here we have look at the req.body.clientID
         { $match: {
-            eventID: req.params.id
+            eventID: req.params.id, organizations : ORG_ID
         }},
         // $lookup is like a join in SQL
         { $lookup: {
@@ -127,53 +134,6 @@ router.get("/eventdata1/:id", (req, res, next) => {
 
 
 
-//delete
-// GET endpoint that will search services attached to an event
-router.get("/eventdata2/:id", (req, res, next) => { 
-    eventdata.aggregate([
-        // $match finds an exact match base on the parameters that you set
-        // here we have look at the req.body.clientID
-        { $match: {
-            eventID: req.params.id
-        }},
-        // $lookup is like a join in SQL
-        { $lookup: {
-            from: 'serviceData',
-            localField: 'services',
-            foreignField: 'serviceID',
-            as: 'services',
-        },},
-        
-        {$unwind: '$services'}, 
-        // $addFields can create an alias for what you joined the tables "as"
-        { $addFields: {
-            "servicename": "$services.serviceName",
-            "servicedescription" : "$services.serviceDescription",
-            "serviceid" : "$services.serviceID",
-        }},
-        // $project acts like a filter
-        // you can pick which fields you want to show from the aggregate pipeline
-        { $project: {
-            _id : 0,
-            servicename : 1,
-            servicedescription : 1,
-            serviceid : 1,
-            eventName : 1
-        }}
-        // can use $count to count how many attendees are signed up for each event
-        //this number would be useful for the frontend graph and table we need to create
-    ] , (error, data) => {
-            if (error) {
-                return next(error);
-            } else if (data.length < 1) {
-                res.status(404).send('No services found for event');
-            } else {
-                res.json(data);
-            }
-        }
-    ).sort({ 'updatedAt': -1 }).limit(10);
-});
-
 //keep
 // Shows how many clients signed up for an event by the last 2 months
 router.get("/last2months", (req, res, next) => {
@@ -210,11 +170,11 @@ router.get("/last2months", (req, res, next) => {
 
 //magic
 //GET entries based on search query
-//Ex: '...?eventName=Food&searchBy=name' 
+//Ex: '...?searchBy=name 
 router.get("/search/", (req, res, next) => { 
     let dbQuery = "";
     if (req.query["searchBy"] === 'name') {
-        dbQuery = { eventName: { $regex: `^${req.query["eventName"]}`, $options: "i" } }
+        dbQuery = { eventName: { $regex: `^${req.query["eventName"]}`, $options: "i" }, organizations : ORG_ID }
     } else if (req.query["searchBy"] === 'date') { //reference https://www.mongodb.com/docs/manual/reference/operator/query/regex/
         dbQuery = {
             date:  req.query["eventDate"]
@@ -233,16 +193,22 @@ router.get("/search/", (req, res, next) => {
 });
 
 
-//keep
 //POST adds events to event collection
 router.post("/event", (req, res, next) => { 
-    eventdata.create( 
-        req.body, //use the post method on primaryData for how to do
+    eventdata.create(
+        {   eventID : req.body.eventID,
+            eventName : req.body.eventName,
+            services : req.body.services,
+            date : req.body.date,
+            description : req.body.description,
+            attendees : req.body.attendees,
+            organizations : ORG_ID
+        },
         (error, data) => { 
             if (error) {
                 return next(error);
             } else {
-                res.json(data);
+                res.json(data); 
             }
         }
     );
@@ -252,7 +218,7 @@ router.post("/event", (req, res, next) => {
 //PUT that updates based on id in parameter url. 
 router.put("/:id", (req, res, next) => {
     eventdata.findOneAndUpdate(
-        { eventID: req.params.id },
+        { eventID: req.params.id, organizations : ORG_ID },
         req.body,
         (error, data) => {
             if (error) {
@@ -266,38 +232,38 @@ router.put("/:id", (req, res, next) => {
     );
 });
 
-//keep but need to fix. the serviceData table is no long a thing so it sould just be adding strings (what the service name is) to the array
+
 // PUT that adds serviceIDs to events
 router.put('/addservices/:id', (req, res, next) => {
-    eventdata.findOneAndUpdate({ eventID: req.params.id, // reference https://www.mongodb.com/docs/manual/reference/method/db.collection.findOneAndUpdate/
-        services: {$not: {$in: req.body.serviceID}} },
-        { $addToSet: { services : req.body.serviceID } },
+    eventdata.findOneAndUpdate({ eventID: req.params.id, organizations : ORG_ID, // reference https://www.mongodb.com/docs/manual/reference/method/db.collection.findOneAndUpdate/
+/*services: {*$not: {$in: req.body*.serviceID}} */},
+        { $addToSet: { services : req.body.services } },
         (error, data) => {
             if (error) {
             return next(error);
         } else if (data === null) {
-            res.status(409).send('Service is already added or event does not exist');
+            res.status(409).send('Event does not exist');
             } else {
-            res.send('Service ID is added to services array in eventData via PUT');
+            res.send('Service name is added to services array in eventData via PUT');
             }
       })
 });
 
 
-//this needs fixed too
+
 // PUT this updates the attendees array
-// Removes a specified organization from the client's list
+// Removes a specified service from the client's list
 router.put('/removeservices/:id', (req, res, next) => {
-    eventdata.findOneAndUpdate({ eventID: req.params.id,
-        services: {$in: req.body.serviceID}}, 
-        { $pull: { 'services' : req.body.serviceID} }, 
+    eventdata.findOneAndUpdate({ eventID: req.params.id, organizations : ORG_ID,
+        /*services: {$in: req.body.serviceID}*/}, 
+        { $pull: { 'services' : req.body.services} }, 
         (error, data) => {
             if (error) {
             return next(error);
         } else if (data === null) {
-            res.status(409).send('Service is already removed or event does not exist');
+            res.status(409).send('Event does not exist');
             } else {
-            res.send('Service ID is removed from services array in eventData via PUT');
+            res.send('Service is removed from services array in eventData via PUT');
             }
       })
 });
@@ -307,7 +273,7 @@ router.put('/removeservices/:id', (req, res, next) => {
 //keep
 // PUT that adds clientIDs to events
 router.put('/addattendees/:id', (req, res, next) => {
-    eventdata.findOneAndUpdate({ eventID: req.params.id, 
+    eventdata.findOneAndUpdate({ eventID: req.params.id, organizations : ORG_ID,
         attendees: {$not: { $in: req.body.clientID }}},
         { $addToSet: { attendees : req.body.clientID } },
         (error, data) => {
@@ -320,12 +286,15 @@ router.put('/addattendees/:id', (req, res, next) => {
             }
       })
 });
-//keep
+
+
+
+
 // PUT that
 // Removes attendees from attendees array in eventData collection
 router.put('/removeattendees/:id', (req, res, next) => {
-    eventdata.findOneAndUpdate({ eventID: req.params.id, 
-        attendees : {$in: req.body.clientID} }, 
+    eventdata.findOneAndUpdate({ eventID: req.params.id,
+        attendees : {$in: req.body.clientID}, organizations : ORG_ID },
         { $pull: { attendees : req.body.clientID} },  // reference https://stackoverflow.com/questions/15625633/nodejs-mongoose-mongodb-pull-from-array-not-working
         (error, data) => {
             if (error) {
@@ -333,13 +302,13 @@ router.put('/removeattendees/:id', (req, res, next) => {
             } else if (data === null) {
             res.status(409).send('Attendee has already been removed or event does not exist');
             } else {
-            res.send('Attendee ID is removed from services array in eventData via PUT');
+            res.send('Attendee ID is removed from array in eventData via PUT');
             }
       })
 });
 
 
-//keep
+
 /// DELETE BY ID
 router.delete('/eventdata/:id', (req, res, next) => {
     eventdata.findOneAndRemove({ _id: req.params.id}, (error, data) => {

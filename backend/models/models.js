@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 
 //delete
 //collection for serviceData 
-let serviceDataSchema = new Schema({ 
+/*let serviceDataSchema = new Schema({ 
     _id: {type: String, default: uuid.v1}, 
     serviceID: {
         type: String,
@@ -24,7 +24,7 @@ let serviceDataSchema = new Schema({
     },{
         collection: 'serviceData',
         timestamps: true
-}); 
+}); */
 
 //collection for intakeData
 let primaryDataSchema = new Schema({
@@ -149,10 +149,10 @@ let eventDataSchema = new Schema({
 });
 
 // create models from mongoose schemas
-const servicedata = mongoose.model('serviceData', serviceDataSchema);
+//const servicedata = mongoose.model('serviceData', serviceDataSchema);
 const primarydata = mongoose.model('primaryData', primaryDataSchema);
 const organizationdata = mongoose.model('organizationData', organizationDataSchema);
 const eventdata = mongoose.model('eventData', eventDataSchema);
 
 // package the models in an object to export 
-module.exports = { servicedata, primarydata, organizationdata, eventdata }
+module.exports = { /*servicedata,*/ primarydata, organizationdata, eventdata }
