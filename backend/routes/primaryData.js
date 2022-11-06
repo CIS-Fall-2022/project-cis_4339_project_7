@@ -120,37 +120,6 @@ router.get("/events/:id", (req, res, next) => {
     );
 });
 
-/////may need to delete//////
-/*
-// GET gets list of service names for a client by clientID
-router.get("/listofsrvcsforclientbyid/:id", (req, res, next) => { 
-    primarydata.aggregate([
-        // $match finds an exact match base on the parameters that you set
-        // here we have look at the req.body.clientID
-        { $match: {
-            clientID: req.params.id
-        }},
-        // $lookup is like a join in SQL
-        { $lookup: {
-            from: 'serviceData',
-            localField: 'servicesNeeded',
-            foreignField: 'serviceID',
-            as: 'services'
-        }}, 
-        // can use $count to count how many attendees are signed up for each event
-        //this number would be useful for the frontend graph and table we need to create
-    ] , (error, data) => {
-            if (error) {
-                return next(error);
-            } else if (data.length < 1) {
-                res.status(404).send('Client not found');
-            } else {
-                res.json(data);
-            }
-        }
-    ).sort({ 'updatedAt': -1 }).limit(10);
-});
-*/
 // UPDATE OPS PUT Method
 
 // PUT update (make sure req body doesn't have the id)
