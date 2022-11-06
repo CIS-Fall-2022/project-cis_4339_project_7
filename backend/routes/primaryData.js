@@ -120,34 +120,6 @@ router.get("/events/:id", (req, res, next) => {
     );
 });
 
-/// Delete this? yep!
-// GET this retrieves a list of organizations by name for a specified client
-router.get("/listoforgforclientbyid/:id", (req, res, next) => { 
-    primarydata.aggregate([
-        // $match finds an exact match base on the parameters that you set
-        // here we have look at the req.body.clientID
-        { $match: {
-            clientID: req.params.id,
-        }},
-        // $lookup is like a join in SQL
-        { $lookup: {
-            from: 'organizationData',
-            localField: 'clientOfOrgs',
-            foreignField: 'organizationID',
-            as: 'organizations'
-        }}
-    ] , (error, data) => {
-            if (error) {
-                return next(error);
-            } else if (data.length < 1) {
-                res.status(404).send('Client not found');
-            } else {
-                res.json(data);
-            }
-        }
-    ).sort({ 'updatedAt': -1 }).limit(10);
-});
-
 /////may need to delete//////
 /*
 // GET gets list of service names for a client by clientID
@@ -197,82 +169,7 @@ router.put("/updateclient/:id", (req, res, next) => {
         }
     );
 });
-//DELETE this
-// PUT this updates the clientOfOrgs array
-// Adds a new organization to the list that the client belongs to
-router.put('/addclienttoorg/:id', (req, res, next) => {
-    primarydata.findOneAndUpdate({ clientID: req.params.id, 
-        clientOfOrgs: {$not: {$in: ORG_ID}} }, 
-        { $addToSet: { clientOfOrgs : ORG_ID} },
-        (error, data) => {
-            if (error) {
-            return next(error);
-            } else if (data === null) {
-                res.status(409).send('Organization is already added or client does not exist');
-            } else {
-            res.send('Organization Client is added via PUT');
-            console.log('Organization Client successfully added!', data);
-            }
-      })
-});
-//DELETE this
-// PUT this updates the clientOfOrgs array
-// Removes a specified organization from the client's list
-router.put('/removeclientorg/:id', (req, res, next) => {
-    primarydata.findOneAndUpdate({ clientID: req.params.id,
-        clientOfOrgs: {$in: req.body.organizationID}}, 
-        { $pull: { clientOfOrgs: {$in: ORG_ID}} }, 
-        (error, data) => {
-            if (error) {
-            return next(error);
-            } else if (data === null) {
-                res.status(409).send('Organization is already removed or client does not exist');
-            } else {
-            res.send('Organization Client is removed via PUT');
-            console.log('Organization Client successfully removed!', data)
-            }
-      })
-});
-// DELETE
-// PUT this updates the servicesNeeded array
-// Adds a new service to the client's list
-router.put('/addserviceforclient/:id', (req, res, next) => {
-    primarydata.findOneAndUpdate({ clientID: req.params.id,
-        servicesNeeded: {$not: { $in: req.body.serviceID }} }, 
-        { $addToSet: { servicesNeeded : req.body.serviceID} }, 
-        (error, data) => {
-            if (error) {
-            return next(error);
-            } else if (data === null) {
-                res.status(409).send('Service is already added or client does not exist');
-            } else {
-            res.send('Service for Client is added via PUT');
-            console.log('Service for Client successfully added!', data)
-            }
-      })
-});
 
-//DELETE
-// PUT this updates the servicesNeeded array
-// Removes a specified service from the client's list
-router.put('/removeserviceforclient/:id', (req, res, next) => {
-    primarydata.findOneAndUpdate({ clientID: req.params.id, 
-    servicesNeeded : {$in: req.body.serviceID} }, 
-        { $pull: { servicesNeeded : req.body.serviceID} }, 
-        (error, data) => {
-            if (error) {
-            return next(error);
-            } else if (data === null) {
-                res.status(409).send('Service has already been removed or client does not exist');
-            } else {
-                res.send('Service for Client is removed via PUT');
-                console.log('Service for Client successfully removed!', data)
-            }
-            
-      })
-});
-
-// DELETE OPS DELETE Method
 
 // DELETE deletes a client from the DB based on clientID
 router.delete('/primarydatadel/:id', (req, res, next) => {

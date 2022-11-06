@@ -138,7 +138,7 @@ router.get("/eventdata1/:id", (req, res, next) => {
 // Shows how many clients signed up for an event by the last 2 months
 router.get("/last2months", (req, res, next) => {
     var pastDate = new Date(); // reference https://stackoverflow.com/questions/7937233/how-do-i-calculate-the-date-in-javascript-three-months-prior-to-today
-    pastDate.setMonth(pastDate.getMonth() - 2);
+    pastDate.setMonth(pastDate.getMonth() - 2); //subtractiing 2 months from today
     eventdata.aggregate([
         {$match:{ /// finds an exact match on the data we have in mongodb
             date :{
@@ -269,7 +269,6 @@ router.put('/removeservices/:id', (req, res, next) => {
 });
 
 
-
 //keep
 // PUT that adds clientIDs to events
 router.put('/addattendees/:id', (req, res, next) => {
@@ -287,9 +286,6 @@ router.put('/addattendees/:id', (req, res, next) => {
       })
 });
 
-
-
-
 // PUT that
 // Removes attendees from attendees array in eventData collection
 router.put('/removeattendees/:id', (req, res, next) => {
@@ -306,8 +302,6 @@ router.put('/removeattendees/:id', (req, res, next) => {
             }
       })
 });
-
-
 
 /// DELETE BY ID
 router.delete('/eventdata/:id', (req, res, next) => {

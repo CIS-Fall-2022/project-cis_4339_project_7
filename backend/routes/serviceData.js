@@ -33,24 +33,6 @@ router.get("/id/:id", (req, res, next) => {
 });
 
 
-// DELETES SERVICES BY ID
-
-router.delete('/servicedata/:id', (req, res, next) => {
-    servicedata.findOneAndRemove({ serviceID: req.params.id}, (error, data) => {
-        if (error) {
-          return next(error);
-        } else if (data === null) {
-            res.status(404).send('Service not found');
-        } else {
-           res.status(200).json({
-             msg: data
-           });
-        //   res.send('Service has been deleted');
-        }
-      });
-});
-
-
 //POST
 router.post("/createservice", (req, res, next) => { 
     servicedata.create( 
