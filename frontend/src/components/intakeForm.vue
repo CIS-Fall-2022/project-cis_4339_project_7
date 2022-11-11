@@ -12,6 +12,7 @@ export default {
   data() {
     return {
       client: {
+        clientID: "",
         firstName: "",
         middleName: "",
         lastName: "",
@@ -38,13 +39,14 @@ export default {
       const isFormCorrect = await this.v$.$validate();
       // If no errors found. isFormCorrect = True then the form is submitted
       if (isFormCorrect) {
-        let apiURL = import.meta.env.VITE_ROOT_API + `/primarydata`;
+        let apiURL = import.meta.env.VITE_ROOT_API + `/primaryData/`;
         axios
           .post(apiURL, this.client)
           .then(() => {
             alert("Client has been succesfully added.");
             this.$router.push("/findclient");
             this.client = {
+              clientID: "",
               firstName: "",
               middleName: "",
               lastName: "",
@@ -74,6 +76,7 @@ export default {
   validations() {
     return {
       client: {
+        clientID: { required },
         firstName: { required, alpha },
         lastName: { required, alpha },
         email: { email },
@@ -153,6 +156,7 @@ export default {
             </label>
           </div>
 
+
           <div></div>
           <!-- form field -->
           <div class="flex flex-col">
@@ -193,6 +197,26 @@ export default {
               </span>
             </label>
           </div>
+
+          <div class="flex flex-col" >
+            <label class="block" >
+              <span class="text-gray-700">Client ID</span>
+              <input
+                type="text" 
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                v-model="client.clientID"
+              />
+          <span class="text-black" v-if="v$.client.clientID.$error">
+                <p
+                  class="text-red-700"
+                  v-for="error of v$.client.clientID.$errors"
+                  :key="error.$uid"
+                >{{ error.$message }}!</p>
+              </span>
+            </label>
+          </div>
+
+
           <!-- form field -->
           <div class="flex flex-col">
             <label class="block">
@@ -206,6 +230,10 @@ export default {
             </label>
           </div>
         </div>
+
+
+
+
 
         <!-- grid container -->
         <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">

@@ -6,11 +6,12 @@ const Schema = mongoose.Schema;
 
 //collection for intakeData
 let primaryDataSchema = new Schema({
-    clientID: { type: String, default: uuid.v1 },
-    /*clientID: {
+    _id: { type: String, default: uuid.v1 },
+    clientID: {
         type: String,
+        require: true,
         unique: true
-    },*/
+    },
     firstName: {
         type: String,
         require: true
@@ -25,10 +26,18 @@ let primaryDataSchema = new Schema({
     email: {
         type: String
     },
-    phoneNumbers: {
-        type: Array,
+    phoneNumbers: [
+    {
+        primaryPhone: {
+        type: String,
         require: true
-    },
+        },
+        secondaryPhone: {
+            type: String
+        },
+        _id : false
+    }
+    ],
     address: {
         line1: {
             type: String

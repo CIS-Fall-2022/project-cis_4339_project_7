@@ -96,12 +96,15 @@ router.get("/search/", (req, res, next) => {
     let dbQuery = "";
     if (req.query["searchBy"] === 'name' && 
     (req.query["firstName"].length >= 1 || req.query["lastName"].length >= 1)) {
-        dbQuery = { firstName: { $regex: `^${req.query["firstName"]}`,
-         $options: "i" }, lastName: { $regex: `^${req.query["lastName"]}`, $options: "i" }, 
-         clientOfOrgs: ORG_ID}
-    } else if (req.query["searchBy"] === 'number' && req.query["phoneNumbers"].length >= 1) {
+        dbQuery = { 
+            firstName: { $regex: `^${req.query["firstName"]}`,
+            $options: "i" }, lastName: { $regex: `^${req.query["lastName"]}`, $options: "i" }, 
+            clientOfOrgs: ORG_ID}
+
+    } else if (req.query["searchBy"] === 'number' && 
+    (req.query["phoneNumbers.primaryPhone"].length >= 1)) {
         dbQuery = {
-            "phoneNumbers": { $regex: `^${req.query["phoneNumbers"]}`, 
+            "phoneNumbers.primaryPhone": { $regex: `^${req.query["phoneNumbers.primaryPhone"]}`, 
             $options: "i" },
             clientOfOrgs: ORG_ID
         }
@@ -119,6 +122,7 @@ router.get("/search/", (req, res, next) => {
         }
     );
 });
+
 
 // GET events for a single client
 router.get("/events/:id", (req, res, next) => { 
