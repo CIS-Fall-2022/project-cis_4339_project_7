@@ -7,11 +7,11 @@ const Schema = mongoose.Schema;
 //collection for intakeData
 let primaryDataSchema = new Schema({
     _id: { type: String, default: uuid.v1 },
-    clientID: {
+    /*clientID: {
         type: String,
         require: true,
         unique: true
-    },
+    },*/
     firstName: {
         type: String,
         require: true
