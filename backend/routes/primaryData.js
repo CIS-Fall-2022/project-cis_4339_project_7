@@ -4,7 +4,9 @@ const router = express.Router();
 //importing data model schemas
 let { primarydata } = require("../models/models"); 
 let { eventdata } = require("../models/models");
-let { ORG_ID } = require("../app.js")
+let { organizationdata } = require("../models/models");
+let { ORG_ID } = require("../app.js");
+
 
 // CRUD OPS
 
@@ -37,6 +39,22 @@ router.post("/", (req, res, next) => {
 });
 
 // READ OPS GET Method
+
+// GET organization name
+router.get("/organization", (req, res, next) => { 
+    organizationdata.findOne(
+        {organizationID: ORG_ID},
+        (error, data) => {
+            if (error) {
+                return next(error);
+            } else if (data.length < 1) {
+                res.status(404).send('No Organization found');
+            } else {
+                res.json(data);
+            }
+        }
+    ).sort({ 'updatedAt': -1 }).limit(10);
+});
 
 // GET all entries
 router.get("/", (req, res, next) => { 
@@ -102,7 +120,6 @@ router.get("/search/", (req, res, next) => {
     );
 });
 
-//MAY NOT NEED !!!!
 // GET events for a single client
 router.get("/events/:id", (req, res, next) => { 
     eventdata.find( 

@@ -58,13 +58,21 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "App",
   data(){
     return {
-      ORG_NAME: import.meta.env.VITE_ORG_NAME1
+      ORG_NAME: 'org'
     }
-  }
+  },
+  created() {
+            let apiURL =  import.meta.env.VITE_ROOT_API + '/primarydata/organization';
+            axios.get(apiURL).then(res => {
+                this.ORG_NAME = res.data.organizationName;
+            }).catch(error => {
+                console.log(error)
+            });}
 };
 </script>
 
