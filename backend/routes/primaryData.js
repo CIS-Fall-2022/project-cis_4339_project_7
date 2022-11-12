@@ -16,7 +16,7 @@ let { ORG_ID } = require("../app.js");
 
 router.post("/", (req, res, next) => { 
     primarydata.create(
-        {   clientID : req.body.clientID,
+        {
             firstName : req.body.firstName,
             middleName : req.body.middleName,
             lastName : req.body.lastName,
