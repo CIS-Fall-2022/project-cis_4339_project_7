@@ -69,7 +69,7 @@ export default {
     axios
       .get(
         import.meta.env.VITE_ROOT_API +
-          `/eventdata/client/${this.$route.params.id}`
+          `/primarydata/events/${this.$route.params.id}`
       )
       .then((resp) => {
         let data = resp.data;

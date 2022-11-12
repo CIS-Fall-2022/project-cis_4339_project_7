@@ -272,10 +272,10 @@ router.put('/removeservices/:id', (req, res, next) => {
 
 //keep
 // PUT that adds clientIDs to events
-router.put('/addattendees/:id', (req, res, next) => {
+router.put('/addattendee/:id', (req, res, next) => {
     eventdata.findOneAndUpdate({ _id: req.params.id, organizations : ORG_ID,
-        attendees: {$not: { $in: req.body.clientID }}},
-        { $addToSet: { attendees : req.body.clientID } },
+        attendees: {$not: { $in: req.body.id }}},
+        { $addToSet: { attendees : req.body.id } },
         (error, data) => {
             if (error) {
             return next(error);
@@ -291,8 +291,8 @@ router.put('/addattendees/:id', (req, res, next) => {
 // Removes attendees from attendees array in eventData collection
 router.put('/removeattendees/:id', (req, res, next) => {
     eventdata.findOneAndUpdate({ _id: req.params.id,
-        attendees : {$in: req.body.clientID}, organizations : ORG_ID },
-        { $pull: { attendees : req.body.clientID} },  // reference https://stackoverflow.com/questions/15625633/nodejs-mongoose-mongodb-pull-from-array-not-working
+        attendees : {$in: req.body._id}, organizations : ORG_ID },
+        { $pull: { attendees : req.body._id} },  // reference https://stackoverflow.com/questions/15625633/nodejs-mongoose-mongodb-pull-from-array-not-working
         (error, data) => {
             if (error) {
             return next(error);
