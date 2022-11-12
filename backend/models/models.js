@@ -120,7 +120,7 @@ let eventDataSchema = new Schema({
         type: String,
     },
     attendees: {
-        type: [String] // references clientID in primaryData collection
+        type: [String] // references _id in primaryData collection
     }
 }, {
     collection: 'eventData'

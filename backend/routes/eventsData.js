@@ -12,7 +12,7 @@ let { ORG_ID } = require("../app.js")
 
 //GET all events for organization
 // reference https://stackoverflow.com/questions/37202585/check-if-value-exists-in-array-field-in-mongodb
-router.get("/events", (req, res, next) => { 
+router.get("/", (req, res, next) => { 
     eventdata.find( 
         { organizations: ORG_ID }, 
         (error, data) => {
@@ -198,11 +198,12 @@ router.post("/event", (req, res, next) => {
     eventdata.create(
         {   
             eventName : req.body.eventName,
+            organizations : ORG_ID,
             services : req.body.services,
             date : req.body.date,
+            address : req.body.address,
             description : req.body.description,
-            attendees : req.body.attendees,
-            organizations : ORG_ID
+            attendees : req.body.attendees
         },
         (error, data) => { 
             if (error) {
