@@ -294,7 +294,7 @@ export default {
                 `/primarydata/id/${this.attendeeIDs[i]}`
             )
             .then((resp) => {
-              let data = resp.data[0];
+              let data = resp.data;
               this.attendeeData.push({
                 attendeeID: this.attendeeIDs[i],
                 attendeeFirstName: data.firstName,

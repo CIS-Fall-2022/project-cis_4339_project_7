@@ -51,7 +51,7 @@ export default {
           `/primarydata/id/${this.$route.params.id}`
       )
       .then((resp) => {
-        let data = resp.data[0];
+        let data = resp.data;
         this.client.firstName = data.firstName;
         this.client.middleName = data.middleName;
         this.client.lastName = data.lastName;
@@ -73,7 +73,7 @@ export default {
       )
       .then((resp) => {
         let data = resp.data;
-        resp.data.forEach((event) => {
+        data.forEach((event) => {
           this.clientEvents.push({
             eventName: event.eventName,
             eventDate: event.date,
