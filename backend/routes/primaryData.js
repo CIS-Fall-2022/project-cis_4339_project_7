@@ -75,7 +75,7 @@ router.get("/", (req, res, next) => {
 // GET single entry by ID
 router.get("/id/:id", (req, res, next) => {
     primarydata.findOne( 
-        { clientID: req.params.id,
+        { _id: req.params.id,
         clientOfOrgs: ORG_ID}, 
         (error, data) => {
             if (error) {
@@ -142,7 +142,7 @@ router.get("/events/:id", (req, res, next) => {
 // PUT update (make sure req body doesn't have the id)
 router.put("/updateclient/:id", (req, res, next) => { 
     primarydata.findOneAndUpdate( 
-        { clientID : req.params.id }, 
+        { _id: req.params.id }, 
         req.body,
         (error, data) => {
             if (error) {
@@ -159,7 +159,7 @@ router.put("/updateclient/:id", (req, res, next) => {
 
 // DELETE deletes a client from the DB based on clientID
 router.delete('/primarydatadel/:id', (req, res, next) => {
-    primarydata.findOneAndRemove({ clientID: req.params.id}, (error, data) => {
+    primarydata.findOneAndRemove({ _id: req.params.id}, (error, data) => {
         if (error) {
           return next(error);
         } else if (data === null) {

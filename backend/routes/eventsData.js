@@ -31,7 +31,7 @@ router.get("/events", (req, res, next) => {
 //maybe keep?
 //GET SINGLE ENTRY BY ID
 router.get("/id/:id", (req, res, next) => { 
-    eventdata.find({ eventID: req.params.id,
+    eventdata.find({ _id: req.params.id,
         organizations : ORG_ID //references back to ORG_ID variable in app.js
      }, 
         (error, data) => {
@@ -92,13 +92,13 @@ router.get("/eventdata1/:id", (req, res, next) => {
         // $match finds an exact match base on the parameters that you set
         // here we have look at the req.body.clientID
         { $match: {
-            eventID: req.params.id, organizations : ORG_ID
+            _id: req.params.id, organizations : ORG_ID
         }},
         // $lookup is like a join in SQL
         { $lookup: {
             from: 'primaryData',
             localField: 'attendees',
-            foreignField: 'clientID',
+            foreignField: '_id',
             as: 'clients' //reference https://stackoverflow.com/questions/17223517/mongoose-casterror-cast-to-objectid-failed-for-value-object-object-at-path
         }}, 
         {$unwind: '$clients'},
@@ -196,7 +196,7 @@ router.get("/search/", (req, res, next) => {
 //POST adds events to event collection
 router.post("/event", (req, res, next) => { 
     eventdata.create(
-        {   eventID : req.body.eventID,
+        {   
             eventName : req.body.eventName,
             services : req.body.services,
             date : req.body.date,
@@ -218,7 +218,7 @@ router.post("/event", (req, res, next) => {
 //PUT that updates based on id in parameter url. 
 router.put("/:id", (req, res, next) => {
     eventdata.findOneAndUpdate(
-        { eventID: req.params.id, organizations : ORG_ID },
+        { _id: req.params.id, organizations : ORG_ID },
         req.body,
         (error, data) => {
             if (error) {
@@ -235,7 +235,7 @@ router.put("/:id", (req, res, next) => {
 
 // PUT that adds serviceIDs to events
 router.put('/addservices/:id', (req, res, next) => {
-    eventdata.findOneAndUpdate({ eventID: req.params.id, organizations : ORG_ID, // reference https://www.mongodb.com/docs/manual/reference/method/db.collection.findOneAndUpdate/
+    eventdata.findOneAndUpdate({ _id: req.params.id, organizations : ORG_ID, // reference https://www.mongodb.com/docs/manual/reference/method/db.collection.findOneAndUpdate/
 /*services: {*$not: {$in: req.body*.serviceID}} */},
         { $addToSet: { services : req.body.services } },
         (error, data) => {
@@ -254,7 +254,7 @@ router.put('/addservices/:id', (req, res, next) => {
 // PUT this updates the attendees array
 // Removes a specified service from the client's list
 router.put('/removeservices/:id', (req, res, next) => {
-    eventdata.findOneAndUpdate({ eventID: req.params.id, organizations : ORG_ID,
+    eventdata.findOneAndUpdate({ _id: req.params.id, organizations : ORG_ID,
         /*services: {$in: req.body.serviceID}*/}, 
         { $pull: { 'services' : req.body.services} }, 
         (error, data) => {
@@ -272,7 +272,7 @@ router.put('/removeservices/:id', (req, res, next) => {
 //keep
 // PUT that adds clientIDs to events
 router.put('/addattendees/:id', (req, res, next) => {
-    eventdata.findOneAndUpdate({ eventID: req.params.id, organizations : ORG_ID,
+    eventdata.findOneAndUpdate({ _id: req.params.id, organizations : ORG_ID,
         attendees: {$not: { $in: req.body.clientID }}},
         { $addToSet: { attendees : req.body.clientID } },
         (error, data) => {
@@ -289,7 +289,7 @@ router.put('/addattendees/:id', (req, res, next) => {
 // PUT that
 // Removes attendees from attendees array in eventData collection
 router.put('/removeattendees/:id', (req, res, next) => {
-    eventdata.findOneAndUpdate({ eventID: req.params.id,
+    eventdata.findOneAndUpdate({ _id: req.params.id,
         attendees : {$in: req.body.clientID}, organizations : ORG_ID },
         { $pull: { attendees : req.body.clientID} },  // reference https://stackoverflow.com/questions/15625633/nodejs-mongoose-mongodb-pull-from-array-not-working
         (error, data) => {
