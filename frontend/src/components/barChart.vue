@@ -23,7 +23,7 @@
           datasets: [
             {
               label: "Clients",
-              backgroundColor: "rgba(255,99,71 , 0.9 )",
+              backgroundColor: "rgba(255,100,71 , 1 )",
               data: this.chartData,
             },
           ],
