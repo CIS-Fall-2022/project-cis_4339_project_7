@@ -1,16 +1,45 @@
 <template>
-  <main>
     <div>
-      <h1 class="font-bold text-4xl text-red-700 tracking-widest text-center mt-10">Welcome</h1>
+    <div v-for="post in posts" v-bind:key="post.id">
+      <h2>{{ post.title }}</h2>
+      <p>{{ post.body }}</p>
+      <AttendingBar
+              v-if="!loading && !error"
+              :label="eventName"
+              :chart-data="attending"
+            ></AttendingBar>
     </div>
-  </main>
+  </div>
 </template>
+
 <script>
+import AttendingBar from './barChart.vue';
+import axios from 'axios';
+Vue.prototype.$http = axios;
+
 export default {
+  data() {
+    return {
+      eventName: [],
+      attendings: [],
+    };
+  },
+
   methods: {
-    routePush(routeName) {
-      this.$router.push({ name: routeName });
+    async getData() {
+      try {
+        const response = await this.$http.get(
+          "http://localhost:27017/eventData/last2months"
+        );
+        // JSON responses are automatically parsed.
+        this.posts = response.data;
+      } catch (error) {
+        console.log(error);
+      }
     },
+  },
+  created() {
+    this.getData();
   },
 };
 </script>
