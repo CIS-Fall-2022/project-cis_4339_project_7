@@ -99,9 +99,9 @@ router.get("/search/", (req, res, next) => {
         dbQuery = { firstName: { $regex: `^${req.query["firstName"]}`,
          $options: "i" }, lastName: { $regex: `^${req.query["lastName"]}`, $options: "i" }, 
          clientOfOrgs: ORG_ID}
-    } else if (req.query["searchBy"] === 'number' && req.query["phoneNumbers"].length >= 1) {
+    } else if (req.query["searchBy"] === 'number' && req.query["phoneNumbers.primaryPhone"].length >= 1) {
         dbQuery = {
-            "phoneNumbers": { $regex: `^${req.query["phoneNumbers"]}`, 
+            "phoneNumbers.primaryPhone": { $regex: `^${req.query["phoneNumbers.primaryPhone"]}`, 
             $options: "i" },
             clientOfOrgs: ORG_ID
         }
