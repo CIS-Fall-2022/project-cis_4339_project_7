@@ -1,12 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-
 const routes = [
     {
         path: '/',
         name: 'dashboard',
         props: true,
-        component: () => import('../components/newDashboard.vue')
+        component: () => import('../components/dashboard.vue')
     },
     {
         path: '/intakeform',
