@@ -31,7 +31,7 @@
         options: {
           scales: {
               y: {
-                  min: 1
+                  min: 0
               }
           }
         }
