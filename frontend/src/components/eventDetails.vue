@@ -198,6 +198,13 @@
           </div>
           <div class="flex justify-between mt-10 mr-20">
             <button
+              @click="deleteEvent"
+              type="submit"
+              class="bg-red-700 text-white rounded"
+            >Delete Event</button>
+          </div>
+          <div class="flex justify-between mt-10 mr-20">
+            <button
               type="reset"
               class="border border-red-700 bg-white text-red-700 rounded"
               @click="$router.go(-1)"
@@ -315,6 +322,15 @@ export default {
       let apiURL = import.meta.env.VITE_ROOT_API + `/eventdata/${this.id}`;
       axios.put(apiURL, this.event).then(() => {
         alert("Update has been saved.");
+        this.$router.back().catch((error) => {
+          console.log(error);
+        });
+      });
+    },
+    deleteEvent(){
+      let apiURL = import.meta.env.VITE_ROOT_API + `/eventdata/eventdata/${this.id}`;
+      axios.delete(apiURL, this.client).then(() => {
+        alert("Event has been deleted.");
         this.$router.back().catch((error) => {
           console.log(error);
         });

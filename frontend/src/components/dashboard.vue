@@ -26,14 +26,12 @@
       <thead class="table-dark">
         <tr>
           <th>Event Name</th>
-          <th>Date</th>
           <th>Number of Clients Registered</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="data in allData" :key="data.id">
           <td>{{ data.eventName }}</td>
-          <td>{{ data.date }}</td>
           <td>{{ data.number_of_clients }}</td>
         </tr>
       </tbody>
