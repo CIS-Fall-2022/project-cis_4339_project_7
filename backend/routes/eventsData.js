@@ -70,6 +70,12 @@ router.get("/search/", (req, res, next) => {
             "services": { $regex: `^${req.query["serviceID"]}`, $options: "i" },
             organizations : ORG_ID
         }
+    } else if (req.query["searchBy"] === 'date' && req.query["date"].length >= 1) {
+
+        dbQuery = {
+            "date": { $regex: `^${req.query["date"]}`, $options: "i" }, //reference https://www.mongodb.com/docs/manual/reference/operator/query/regex/
+            organizations : ORG_ID
+        }
     };
     eventdata.find( 
         dbQuery, 
@@ -168,29 +174,6 @@ router.get("/last2months", (req, res, next) => {
 });
 
 
-//magic
-//GET entries based on search query
-//Ex: '...?searchBy=name 
-router.get("/search/", (req, res, next) => { 
-    let dbQuery = "";
-    if (req.query["searchBy"] === 'name') {
-        dbQuery = { eventName: { $regex: `^${req.query["eventName"]}`, $options: "i" }, organizations : ORG_ID }
-    } else if (req.query["searchBy"] === 'date') { //reference https://www.mongodb.com/docs/manual/reference/operator/query/regex/
-        dbQuery = {
-            date:  req.query["eventDate"]
-        }
-    };
-    eventdata.find( 
-        dbQuery, 
-        (error, data) => { 
-            if (error) {
-                return next(error);
-            } else {
-                res.json(data);
-            }
-        }
-    );
-});
 
 
 //POST adds events to event collection
