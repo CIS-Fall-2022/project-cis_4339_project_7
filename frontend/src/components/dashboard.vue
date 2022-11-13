@@ -19,10 +19,30 @@
                 Loading...
               </p>
             </div>
+            </div>
+<div></div>
+            <div class="row justify-content-center">
+    <table class="table table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>Event Name</th>
+          <th>Date</th>
+          <th>Number of Clients Registered</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="data in allData" :key="data.id">
+          <td>{{ data.eventName }}</td>
+          <td>{{ data.date }}</td>
+          <td>{{ data.number_of_clients }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+
 </template>
   
-  <script>
+<script>
   import AttendingBar from './barChart.vue';
   import axios from "axios";
   export default {
@@ -31,12 +51,14 @@
     },
     data(){
       return {
+        allData:[],
         labels: [],
         chartData :[],
         loading: false,
         error: null,
       }
     },
+
 methods: {
     async fetchData() {
       try {
@@ -45,6 +67,7 @@ methods: {
         const url = import.meta.env.VITE_ROOT_API + '/eventData/last2months';
         const response = await axios.get(url);
         //"re-organizing" - mapping json from the response
+        this.allData = response.data;
         this.labels = response.data.map((item) => item.eventName);
         this.chartData = response.data.map((item) => item.number_of_clients);
       } catch (err) {
@@ -76,3 +99,5 @@ methods: {
   },
 };
   </script>
+
+  
