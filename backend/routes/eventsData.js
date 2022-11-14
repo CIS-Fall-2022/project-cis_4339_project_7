@@ -263,7 +263,7 @@ router.put('/addattendee/:id', (req, res, next) => {
             if (error) {
             return next(error);
             } else if (data === null) {
-            res.status(409).send('Attendee is already added or event does not exist');
+            res.status(409).send('Event does not exist');
             } else {
             res.send('Attendee ID is added to services array in eventData via PUT');
             }
@@ -280,7 +280,7 @@ router.put('/removeattendees/:id', (req, res, next) => {
             if (error) {
             return next(error);
             } else if (data === null) {
-            res.status(409).send('Attendee has already been removed or event does not exist');
+            res.status(409).send('Event does not exist');
             } else {
             res.send('Attendee ID is removed from array in eventData via PUT');
             }
