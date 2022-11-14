@@ -196,6 +196,7 @@
               class="bg-red-700 text-white rounded"
             >Update Event</button>
           </div>
+          <!--delete button using delete method -->
           <div class="flex justify-between mt-10 mr-20">
             <button
               @click="deleteEvent"
@@ -317,7 +318,9 @@ export default {
     formattedDate(datetimeDB) {
       return DateTime.fromISO(datetimeDB).plus({ days: 1 }).toLocaleString();
     },
-    handleEventUpdate() {
+    async handleEventUpdate() {
+      const isFormCorrect = await this.v$.$validate();
+      if (isFormCorrect) {
       this.event.services = this.checkedServices;
       let apiURL = import.meta.env.VITE_ROOT_API + `/eventdata/${this.id}`;
       axios.put(apiURL, this.event).then(() => {
@@ -326,7 +329,8 @@ export default {
           console.log(error);
         });
       });
-    },
+    }},
+    //delete method to call delete event api
     deleteEvent(){
       let apiURL = import.meta.env.VITE_ROOT_API + `/eventdata/eventdata/${this.id}`;
       axios.delete(apiURL, this.client).then(() => {

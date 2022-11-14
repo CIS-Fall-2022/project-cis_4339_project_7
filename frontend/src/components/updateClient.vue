@@ -39,6 +39,7 @@ export default {
       },
       // list of events shown in table
       clientEvents: [],
+      error: null,
     };
   },
   mounted() {
@@ -95,7 +96,9 @@ export default {
     formattedDate(datetimeDB) {
       return DateTime.fromISO(datetimeDB).plus({ days: 1 }).toLocaleString();
     },
-    handleClientUpdate() {
+    async handleClientUpdate() {
+      const isFormCorrect = await this.v$.$validate();
+      if (isFormCorrect) {
       let apiURL = import.meta.env.VITE_ROOT_API + `/primarydata/updateclient/${this.id}`;
       axios.put(apiURL, this.client).then(() => {
         alert("Update has been saved.");
@@ -103,7 +106,8 @@ export default {
           console.log(error);
         });
       });
-    },
+    }},
+    
     deleteClient(){
       let apiURL = import.meta.env.VITE_ROOT_API + `/primarydata/primarydatadel/${this.id}`;
       axios.delete(apiURL, this.client).then(() => {
@@ -154,6 +158,7 @@ export default {
 </script>
 <template>
   <main>
+    
     <h1 class="font-bold text-4xl text-red-700 tracking-widest text-center mt-10">Update Client</h1>
     <div class="px-10 py-20">
       <!-- @submit.prevent stops the submit event from reloading the page-->
@@ -342,6 +347,7 @@ export default {
             >Update Client</button>
           </div>
           <div class="flex justify-between mt-10 mr-20">
+            <!--delete button connected to delete method-->
             <button
               @click="deleteClient"
               type="submit"
