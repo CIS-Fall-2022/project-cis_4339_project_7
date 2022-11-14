@@ -139,6 +139,10 @@ export default {
           });
         });
       });
+      alert("Client has been added to event(s).");
+        this.$router.back().catch((error) => {
+          console.log(error);
+        });
     },
   },
   validations() {

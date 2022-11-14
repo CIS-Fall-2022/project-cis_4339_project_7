@@ -240,8 +240,8 @@ router.put('/addattendee/:id', (req, res, next) => {
 // Removes attendees from attendees array in eventData collection
 router.put('/removeattendees/:id', (req, res, next) => {
     eventdata.findOneAndUpdate({ _id: req.params.id,
-        attendees : {$in: req.body._id}, organizations : ORG_ID },
-        { $pull: { attendees : req.body._id} },  // reference https://stackoverflow.com/questions/15625633/nodejs-mongoose-mongodb-pull-from-array-not-working
+        attendees : {$in: req.body.attendee}, organizations : ORG_ID },
+        { $pull: { attendees : req.body.attendee} },  // reference https://stackoverflow.com/questions/15625633/nodejs-mongoose-mongodb-pull-from-array-not-working
         (error, data) => {
             if (error) {
             return next(error);

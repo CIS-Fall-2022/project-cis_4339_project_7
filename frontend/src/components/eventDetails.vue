@@ -56,6 +56,7 @@
               <textarea
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 rows="2"
+                v-model="event.description"
               ></textarea>
             </label>
           </div>
@@ -245,6 +246,28 @@
               </tbody>
             </table>
           </div>
+          <!-- List for removing clients  -->
+          <div class="flex flex-col">
+            <label class="typo__label">Select Clients to be removed</label>
+            <VueMultiselect
+              class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              v-model="clientsChosen"
+              :options="eventClients"
+              :multiple="false"
+              :searchable="false"
+              :allowempty="true"
+              :close-on-select="true"
+              track-by="clientName"
+              label="clientName"
+            ></VueMultiselect>
+            <div class="flex justify-between">
+              <button
+                @click="removeFromEvent"
+                type="submit"
+                class="mt-5 bg-red-700 text-white rounded"
+              >Remove Client from Event</button>
+            </div>
+          </div>
         </div>
       </form>
     </div>
@@ -252,17 +275,21 @@
 </template>
 <script>
 import useVuelidate from "@vuelidate/core";
-import { required, email, alpha, numeric } from "@vuelidate/validators";
+import { required } from "@vuelidate/validators";
 import axios from "axios";
 import { DateTime } from "luxon";
+import VueMultiselect from "vue-multiselect";
 
 export default {
   props: ["id"],
+  components: { VueMultiselect },
   setup() {
     return { v$: useVuelidate({ $autoDirty: true }) };
   },
   data() {
     return {
+      clientsChosen: [],
+      eventClients: [],
       attendeeIDs: [],
       attendeeData: [],
       checkedServices: [],
@@ -313,6 +340,28 @@ export default {
             });
         }
       });
+      axios
+      .get(
+        import.meta.env.VITE_ROOT_API + `/eventdata/id/${this.$route.params.id}`
+      )
+      .then((resp) => {
+        let data = resp.data[0];
+        this.attendeeIDs = data.attendees;
+        for (let i = 0; i < this.attendeeIDs.length; i++) {
+          axios
+            .get(
+              import.meta.env.VITE_ROOT_API +
+                `/primarydata/id/${this.attendeeIDs[i]}`
+            )
+            .then((resp) => {
+              let data = resp.data;
+              this.eventClients.push({
+                clientID: this.attendeeIDs[i],
+                clientName: data.firstName + ' ' + data.lastName,
+              });
+            });
+        }
+      });
   },
   methods: {
     formattedDate(datetimeDB) {
@@ -343,6 +392,15 @@ export default {
     editClient(clientID) {
       this.$router.push({ name: "updateclient", params: { id: clientID } });
     },
+    removeFromEvent() {
+    let apiURL =
+      import.meta.env.VITE_ROOT_API + `/eventdata/removeattendees/${this.$route.params.id}`;
+    axios.put(apiURL, { attendee: this.clientsChosen.clientID });
+    alert("Client has been removed from event.");
+    this.$router.back().catch((error) => {
+      console.log(error);
+      });
+    },
   },
   // sets validations for the various data properties
   validations() {
@@ -355,3 +413,4 @@ export default {
   },
 };
 </script>
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
