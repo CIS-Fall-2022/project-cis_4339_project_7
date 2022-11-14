@@ -28,7 +28,7 @@ router.get("/", (req, res, next) => {
 });
 
 
-//maybe keep?
+
 //GET SINGLE ENTRY BY ID
 router.get("/id/:id", (req, res, next) => { 
     eventdata.find({ _id: req.params.id,
@@ -217,40 +217,6 @@ router.put("/:id", (req, res, next) => {
 });
 
 
-// PUT that adds serviceIDs to events
-router.put('/addservices/:id', (req, res, next) => {
-    eventdata.findOneAndUpdate({ _id: req.params.id, organizations : ORG_ID, // reference https://www.mongodb.com/docs/manual/reference/method/db.collection.findOneAndUpdate/
-/*services: {*$not: {$in: req.body*.serviceID}} */},
-        { $addToSet: { services : req.body.services } },
-        (error, data) => {
-            if (error) {
-            return next(error);
-        } else if (data === null) {
-            res.status(409).send('Event does not exist');
-            } else {
-            res.send('Service name is added to services array in eventData via PUT');
-            }
-      })
-});
-
-
-
-// PUT this updates the attendees array
-// Removes a specified service from the client's list
-router.put('/removeservices/:id', (req, res, next) => {
-    eventdata.findOneAndUpdate({ _id: req.params.id, organizations : ORG_ID,
-        /*services: {$in: req.body.serviceID}*/}, 
-        { $pull: { 'services' : req.body.services} }, 
-        (error, data) => {
-            if (error) {
-            return next(error);
-        } else if (data === null) {
-            res.status(409).send('Event does not exist');
-            } else {
-            res.send('Service is removed from services array in eventData via PUT');
-            }
-      })
-});
 
 
 //keep
