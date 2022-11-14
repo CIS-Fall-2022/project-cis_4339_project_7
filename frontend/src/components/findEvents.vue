@@ -60,7 +60,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
       <div class="ml-10">
         <h2 class="text-2xl font-bold">List of Events</h2>
-        <h3 class="italic">Click table row to edit/display an entry</h3>
+        <h3 class="italic">Click table row to edit/delete/display an entry</h3>
       </div>
       <div class="flex flex-col col-span-2">
         <table class="min-w-full shadow-md rounded">
@@ -69,6 +69,8 @@
               <th class="p-4 text-left">Event Name</th>
               <th class="p-4 text-left">Event Date</th>
               <th class="p-4 text-left">Event Address</th>
+              <th class="p-4 text-left">Description</th>
+
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-300">
@@ -76,6 +78,7 @@
               <td class="p-2 text-left">{{ event.eventName }}</td>
               <td class="p-2 text-left">{{ formattedDate(event.date) }}</td>
               <td class="p-2 text-left">{{ event.address.line1 }}</td>
+              <td class="p-2 text-left">{{ event.description }}</td>
             </tr>
           </tbody>
         </table>
@@ -118,7 +121,7 @@ export default {
       } else if (this.searchBy === "Event Date") {
         apiURL =
           import.meta.env.VITE_ROOT_API +
-          `/eventdata/search/?eventDate=${this.eventDate}&searchBy=date`;
+          `/eventdata/search/?date=${this.eventDate}&searchBy=date`;
       }
       axios.get(apiURL).then((resp) => {
         this.queryData = resp.data;

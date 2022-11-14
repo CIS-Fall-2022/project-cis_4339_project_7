@@ -73,7 +73,7 @@ router.get("/search/", (req, res, next) => {
     } else if (req.query["searchBy"] === 'date' && req.query["date"].length >= 1) {
 
         dbQuery = {
-            "date": { $regex: `^${req.query["date"]}`, $options: "i" }, //reference https://www.mongodb.com/docs/manual/reference/operator/query/regex/
+            "date": { $eq: `${req.query["date"]}`}, //reference https://www.mongodb.com/docs/manual/reference/operator/query/regex/
             organizations : ORG_ID
         }
     };
