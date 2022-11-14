@@ -129,13 +129,14 @@ export default {
                 `/primarydata/events/${this.$route.params.id}`
             )
             .then((resp) => {
-              let data = resp.data;
-              for (let i = 0; i < data.length; i++) {
-                this.clientEvents.push({
-                  eventName: data[i].eventName,
-                });
-              }
+            let data = resp.data;
+            data.forEach((event) => {
+              this.clientEvents.push({
+                eventName: event.eventName,
+                eventDate: event.date,
+              });
             });
+          });
         });
       });
     },

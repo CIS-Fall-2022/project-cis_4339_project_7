@@ -258,7 +258,7 @@ router.put('/removeservices/:id', (req, res, next) => {
 router.put('/addattendee/:id', (req, res, next) => {
     eventdata.findOneAndUpdate({ _id: req.params.id, organizations : ORG_ID,
         attendees: {$not: { $in: req.body.id }}},
-        { $addToSet: { attendees : req.body.id } },
+        { $addToSet: { attendees : req.body.attendee } },
         (error, data) => {
             if (error) {
             return next(error);
