@@ -394,7 +394,11 @@ export default {
               class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               v-model="eventsChosen"
               :options="eventData"
-              :multiple="false"
+              :multiple="true"
+              :searchable="false"
+              :allowempty="true"
+              :close-on-select="false"
+              track-by="eventName"
               label="eventName"
             ></VueMultiselect>
             <div class="flex justify-between">
