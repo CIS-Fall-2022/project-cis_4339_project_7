@@ -223,13 +223,13 @@ router.put("/:id", (req, res, next) => {
 // PUT that adds clientIDs to events
 router.put('/addattendee/:id', (req, res, next) => {
     eventdata.findOneAndUpdate({ _id: req.params.id, organizations : ORG_ID,
-        attendees: {$not: { $in: req.body.id }}},
+        attendees: {$not: { $in: req.body.attendee }}},
         { $addToSet: { attendees : req.body.attendee } },
         (error, data) => {
             if (error) {
             return next(error);
             } else if (data === null) {
-            res.status(409).send('Event does not exist');
+            res.status(409).send('Attendee is already in there or event does not exist');
             } else {
             res.send('Attendee ID is added to services array in eventData via PUT');
             }
