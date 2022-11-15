@@ -109,6 +109,10 @@ export default {
     }},
     
     deleteClient(){
+      this.eventData.forEach((event) => {
+        let apiURL = import.meta.env.VITE_ROOT_API + `/eventdata/removeattendees/` + event._id;
+        axios.put(apiURL, { attendee: this.id});
+      });
       let apiURL = import.meta.env.VITE_ROOT_API + `/primarydata/primarydatadel/${this.id}`;
       axios.delete(apiURL, this.client).then(() => {
         alert("Client has been deleted.");
