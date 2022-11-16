@@ -29,6 +29,8 @@ router.post("/", (req, res, next) => {
         (error, data) => { 
             if (error) {
                 return next(error);
+            } else if (data.length === null) {
+                res.status(404).send('Client not added added.');
             } else {
                 res.send('New client added'); 
             }

@@ -192,7 +192,7 @@ router.post("/event", (req, res, next) => {
             if (error) {
                 return next(error);
             } else if (data.length === null) {
-                res.status(404).send('Nothing added.');
+                res.status(404).send('Event not added.');
             } else {
                 res.send('Event created'); 
             }

@@ -43,6 +43,8 @@ export default {
           .post(apiURL, this.client)
           .then(() => {
             alert("Client has been succesfully added.");
+            this.$router.back().catch((error) => {
+            console.log(error);
             this.$router.push("/findclient");
             this.client = {
               firstName: "",
@@ -67,9 +69,8 @@ export default {
           .catch((error) => {
             console.log(error);
           });
-      }
-    },
-  },
+        })}
+  }},
   // sets validations for the various data properties
   validations() {
     return {
