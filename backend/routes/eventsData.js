@@ -19,7 +19,7 @@ router.get("/", (req, res, next) => {
             if (error) {
                 return next(error);
             } else if (data.length < 1) {
-                res.status(404).send('No events found');
+                res.send('No events found').status(404);
             } else {
                 res.json(data);
             }
@@ -250,7 +250,7 @@ router.put('/removeattendees/:id', (req, res, next) => {
             } else if (data === null) {
             res.send('Event does not exist').status(409);
             } else {
-            res.send('Attendee ID is removed from array in eventData via PUT');
+            res.send('Attendee has been removed from event');
             }
       })
 });
@@ -263,7 +263,7 @@ router.delete('/eventdata/:id', (req, res, next) => {
         } else if(data === null){
             res.send('Event not found').status(404);
         }else {
-           res.status(200).send('The event has been deleted');
+           res.send('The event has been deleted').status(200);
         }
       });
 });

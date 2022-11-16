@@ -30,7 +30,7 @@ router.post("/", (req, res, next) => {
             if (error) {
                 return next(error);
             } else if (data.length === null) {
-                res.status(404).send('Client not added.');
+                res.send('Client was not added.').status(404);
             } else {
                 res.send('New client added'); 
             }
@@ -51,7 +51,7 @@ router.get("/organization", (req, res, next) => {
             if (error) {
                 return next(error);
             } else if (data.length < 1) {
-                res.status(404).send('No Organization found');
+                res.send('No Organization found').status(404);
             } else {
                 res.json(data);
             }
@@ -67,7 +67,7 @@ router.get("/", (req, res, next) => {
             if (error) {
                 return next(error);
             } else if (data.length < 1) {
-                res.status(404).send('No Clients found');
+                res.send('No Clients found').status(404);
             } else {
                 res.json(data);
             }
@@ -84,7 +84,7 @@ router.get("/id/:id", (req, res, next) => {
             if (error) {
                 return next(error);
             } else if (data === null) {
-                res.status(404).send('Client not found');
+                res.send('Client not found').status(404);
             } else {
                 res.json(data);
             }
@@ -115,7 +115,7 @@ router.get("/search/", (req, res, next) => {
             if (error) {
                 return next(error);
             } else if (data.length < 1) {
-                res.status(404).send('Client not found');
+                res.send('Client not found').status(404);
             } else {
                 res.json(data);
             }
@@ -132,7 +132,7 @@ router.get("/events/:id", (req, res, next) => {
             if (error) {
                 return next(error);
             } else if (data.length < 1) {
-                res.status(404).send('Client not found');
+                res.send('Client not found').status(404);
             } else {
                 res.json(data);
             }
@@ -168,7 +168,7 @@ router.delete('/primarydatadel/:id', (req, res, next) => {
         } else if (data === null) {
             res.send('Client not found').status(404);
         } else {
-           res.json('Client has been removed').status(200);
+           res.send('Client has been removed').status(200);
         }
       });
 });
