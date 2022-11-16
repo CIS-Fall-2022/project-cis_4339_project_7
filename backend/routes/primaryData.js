@@ -30,7 +30,7 @@ router.post("/", (req, res, next) => {
             if (error) {
                 return next(error);
             } else if (data.length === null) {
-                res.status(404).send('Client not added added.');
+                res.status(404).send('Client not added.');
             } else {
                 res.send('New client added'); 
             }
