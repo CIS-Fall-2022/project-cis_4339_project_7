@@ -192,7 +192,7 @@ router.post("/event", (req, res, next) => {
             if (error) {
                 return next(error);
             } else {
-                res.json(data); 
+                res.send('Event created'); 
             }
         }
     );
@@ -210,7 +210,7 @@ router.put("/:id", (req, res, next) => {
             } else if (data.length === null) {
                 res.status(404).send('Event not found');
             } else {
-                res.json(data);
+                res.send('Event has been updated');
             }
         }
     );
@@ -229,9 +229,9 @@ router.put('/addattendee/:id', (req, res, next) => {
             if (error) {
             return next(error);
             } else if (data === null) {
-            res.status(409).send('Attendee is already in there or event does not exist');
+            res.send('Attendee is already in there or event does not exist').status(409);
             } else {
-            res.send('Attendee ID is added to services array in eventData via PUT');
+            res.send('Attendee ID is added to event array in eventData via PUT');
             }
       })
 });
@@ -259,9 +259,7 @@ router.delete('/eventdata/:id', (req, res, next) => {
         if (error) { // reference https://stackoverflow.com/questions/30417389/the-findoneandremove-and-findoneandupdate-dont-work-as-intended
           return next(error);
         } else {
-           res.status(200).json({
-             msg: data
-           });
+           res.status(200).send('The event has been deleted');
         }
       });
 });

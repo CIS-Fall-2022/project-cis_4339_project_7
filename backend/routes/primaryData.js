@@ -6,6 +6,7 @@ let { primarydata } = require("../models/models");
 let { eventdata } = require("../models/models");
 let { organizationdata } = require("../models/models");
 let { ORG_ID } = require("../app.js");
+const { stringify } = require("uuid");
 
 
 // CRUD OPS
@@ -29,7 +30,7 @@ router.post("/", (req, res, next) => {
             if (error) {
                 return next(error);
             } else {
-                res.json(data); 
+                res.send('New client added'); 
             }
         }
     );
@@ -148,9 +149,9 @@ router.put("/updateclient/:id", (req, res, next) => {
             if (error) {
                 return next(error);
             } else if (data === null) {
-                res.status(404).send('Client not found');
+                res.send('Client not found').status(404);
             } else {
-                res.json(data);
+                res.send('Client updated');
             }
         }
     );
@@ -165,9 +166,7 @@ router.delete('/primarydatadel/:id', (req, res, next) => {
         } else if (data === null) {
             res.status(404).send('Client not found');
         } else {
-           res.status(200).json({
-             msg: data
-           });
+           res.status(200).json('Client has been removed');
         }
       });
 });
