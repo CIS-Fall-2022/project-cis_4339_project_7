@@ -1,6 +1,6 @@
 <template>
   <div style="position: absolute;
-  top: 35%;
+  top: 50%;
   left: 33%;   width: 650px;
   height: 370px;"> <!-- sets position for chart-->
 
