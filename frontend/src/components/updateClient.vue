@@ -39,7 +39,6 @@ export default {
       },
       // list of events shown in table
       clientEvents: [],
-      error: null,
     };
   },
   mounted() {
@@ -107,7 +106,6 @@ export default {
         });
       });
     }},
-    
     deleteClient(){
       this.eventData.forEach((event) => {
         let apiURL = import.meta.env.VITE_ROOT_API + `/eventdata/removeattendees/` + event._id;
