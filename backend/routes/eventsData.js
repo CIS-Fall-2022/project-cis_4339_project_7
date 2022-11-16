@@ -38,7 +38,7 @@ router.get("/id/:id", (req, res, next) => {
         if (error) { //error handling
             return next(error)
         } else if (data.length < 1) {
-            res.status(404).send('No events found');
+            res.send('No events found').status(404);
         } else {
             res.json(data) // if no error, then respond with json data
         }
@@ -83,7 +83,7 @@ router.get("/search/", (req, res, next) => {
             if (error) {
                 return next(error); // error handling
             } else if (data.length < 1) {
-                res.status(404).send('Event not found'); // respond with no event found if there is nothing matching
+                res.send('Event not found').status(404); // respond with no event found if there is nothing matching
             } else {
                 res.json(data); // if no error, then respond with json data
             }

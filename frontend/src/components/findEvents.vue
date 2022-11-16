@@ -124,7 +124,11 @@ export default {
           `/eventdata/search/?date=${this.eventDate}&searchBy=date`;
       }
       axios.get(apiURL).then((resp) => {
-        this.queryData = resp.data;
+        if (resp.data == 'Event not found') {
+          alert(JSON.stringify(resp.data));
+        }
+        else {
+        this.queryData = resp.data;}
       });
     },
     clearSearch() {
