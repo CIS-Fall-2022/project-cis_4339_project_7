@@ -17,15 +17,15 @@
 </table> 
 </template>
 <script>
-export default {
+export default { //exports from chartsjs
 name: 'TableComponent',
 props:{
     // 
     allData:{
-        type: Array,
+        type: Array, //sets type of alldata as array
     },
     fields:{
-        type: Array,
+        type: Array, //sets type of fields as array
     }
 }, 
 }
