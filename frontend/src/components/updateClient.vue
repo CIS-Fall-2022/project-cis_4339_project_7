@@ -99,8 +99,8 @@ export default {
       const isFormCorrect = await this.v$.$validate();
       if (isFormCorrect) {
       let apiURL = import.meta.env.VITE_ROOT_API + `/primarydata/updateclient/${this.id}`;
-      axios.put(apiURL, this.client).then(() => {
-        alert("Update has been saved.");
+      axios.put(apiURL, this.client).then((resp) => {
+        alert(JSON.stringify(resp.data));
         this.$router.back().catch((error) => {
           console.log(error);
         });
@@ -112,8 +112,8 @@ export default {
         axios.put(apiURL, { attendee: this.id});
       });
       let apiURL = import.meta.env.VITE_ROOT_API + `/primarydata/primarydatadel/${this.id}`;
-      axios.delete(apiURL, this.client).then(() => {
-        alert("Client has been deleted.");
+      axios.delete(apiURL, this.client).then((resp) => {
+        alert(JSON.stringify(resp.data));
         this.$router.back().catch((error) => {
           console.log(error);
         });
@@ -123,30 +123,15 @@ export default {
       this.eventsChosen.forEach((event) => {
         let apiURL =
           import.meta.env.VITE_ROOT_API + `/eventdata/addAttendee/` + event._id;
-        axios.put(apiURL, { attendee: this.$route.params.id }).then(() => {
-          this.clientEvents = [];
-          axios
-            .get(
-              import.meta.env.VITE_ROOT_API +
-                `/primarydata/events/${this.$route.params.id}`
-            )
-            .then((resp) => {
-            let data = resp.data;
-            data.forEach((event) => {
-              this.clientEvents.push({
-                eventName: event.eventName,
-                eventDate: event.date,
-              });
+        axios.put(apiURL, { attendee: this.$route.params.id }).then((resp) => {
+          alert(JSON.stringify(resp.data));
+          this.$router.back().catch((error) => {
+            console.log(error);
             });
-          });
-        });
-      });
-      alert("Client has been added to event(s).");
-        this.$router.back().catch((error) => {
-          console.log(error);
-        });
+          })
+      });      
     },
-  },
+  },  
   validations() {
     return {
       client: {
