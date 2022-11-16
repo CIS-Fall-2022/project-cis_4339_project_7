@@ -11,31 +11,31 @@
               <router-link to="/">
                 <span style="position: relative; top: 6px" class="material-icons">dashboard</span>
                 Dashboard
-              </router-link>
+              </router-link> <!-- sets router link to dashboard-->
             </li>
             <li>
               <router-link to="/intakeform">
                 <span style="position: relative; top: 6px" class="material-icons">people</span>
                 Client Intake Form
-              </router-link>
+              </router-link> <!-- sets router link to intake form-->
             </li>
             <li>
               <router-link to="/eventform">
                 <span style="position: relative; top: 6px" class="material-icons">event</span>
                 Create Event
               </router-link>
-            </li>
+            </li> <!-- sets router link to eventform-->
             <li>
               <router-link to="/findclient">
                 <span style="position: relative; top: 6px" class="material-icons">search</span>
                 Find Client
-              </router-link>
+              </router-link> <!-- sets router link to findclient-->
             </li>
             <li>
               <router-link to="/findEvents">
                 <span style="position: relative; top: 6px" class="material-icons">search</span>
                 Find Event
-              </router-link>
+              </router-link> <!--sets router link to findevents-->
             </li>
           </ul>
         </nav>
@@ -45,10 +45,10 @@
       <section
         class="justify-end items-center h-24 flex"
         style="
-          background: linear-gradient(250deg, #C8102E 70%, #efecec 50.6%);
+          background: linear-gradient(340deg, #C8102E 70%, #BEC4D4 50.6%);
         "
       >
-        <h1 class="mr-20 text-3xl text-white">{{ORG_NAME}}</h1>
+        <u class="text-white"><b><h1 class="mr-20 text-3xl text-white">{{ORG_NAME}}</h1></b></u> <!-- shows org name at top-->
       </section>
       <div>
         <router-view></router-view>
@@ -60,25 +60,26 @@
 <script>
 import axios from "axios";
 export default {
-  name: "App",
+  name: "App", //import acios
   data(){
     return {
-      ORG_NAME: 'org'
+      ORG_NAME: 'org' //returns org_name from .env file
     }
   },
   created() {
             let apiURL =  import.meta.env.VITE_ROOT_API + '/primarydata/organization';
             axios.get(apiURL).then(res => {
-                this.ORG_NAME = res.data.organizationName;
+                this.ORG_NAME = res.data.organizationName; //gets organization name from organization route
             }).catch(error => {
                 console.log(error)
             });}
 };
 </script>
 
+<!-- background color and styles for menu bar-->
 <style>
 #_container {
-  background-color: #c8102e;
+  background-color: #c8102e; 
   color: white;
   padding: 18px;
 }

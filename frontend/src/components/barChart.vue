@@ -1,35 +1,35 @@
 <template>
-    <canvas ref="myChart"></canvas>
+    <canvas ref="myChart"></canvas> <!-- refernces chart-->
   </template>
   
   <script>
   import { Chart, registerables } from 'chart.js'
-  Chart.register(...registerables);
+  Chart.register(...registerables); //imports from chartsjs
   export default {
     props: {
       label: {
-        type: Array,
+        type: Array, //type array for labels
       },
       chartData: {
-        type: Array,
+        type: Array, //type array for chartData
       },
     },
-    async mounted() {
+    async mounted() { //mounts instance
       console.log(this.chartData);
-      await new Chart(this.$refs.myChart, {
+      await new Chart(this.$refs.myChart, { //type bar chart
         type: "bar",
         data: {
-          labels: this.label,
+          labels: this.label, //sets up labels
           datasets: [
             {
-              label: "Clients",
-              backgroundColor: "rgba(255,100,71 , 1 )",
-              data: this.chartData,
+              label: "Clients", //client is label name
+              backgroundColor: "rgb(236, 121, 44)", //background color
+              data: this.chartData, //takes data from chartData variable
             },
           ],
         },
         options: {
-          scales: {
+          scales: { //scales
               y: {
                   min: 0
               }
@@ -37,5 +37,5 @@
         }
       });
     },
-  };
+  }; //ends script
   </script>
