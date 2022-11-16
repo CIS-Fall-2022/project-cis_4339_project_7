@@ -106,7 +106,6 @@ export default {
         });
       });
     }},
-    
     deleteClient(){
       this.eventData.forEach((event) => {
         let apiURL = import.meta.env.VITE_ROOT_API + `/eventdata/removeattendees/` + event._id;
