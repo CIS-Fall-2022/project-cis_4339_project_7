@@ -166,9 +166,9 @@ router.delete('/primarydatadel/:id', (req, res, next) => {
         if (error) {
           return next(error);
         } else if (data === null) {
-            res.status(404).send('Client not found');
+            res.send('Client not found').status(404);
         } else {
-           res.status(200).json('Client has been removed');
+           res.json('Client has been removed').status(200);
         }
       });
 });

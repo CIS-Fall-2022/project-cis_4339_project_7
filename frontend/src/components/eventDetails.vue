@@ -372,8 +372,8 @@ export default {
       if (isFormCorrect) {
       this.event.services = this.checkedServices;
       let apiURL = import.meta.env.VITE_ROOT_API + `/eventdata/${this.id}`;
-      axios.put(apiURL, this.event).then(() => {
-        alert("Update has been saved.");
+      axios.put(apiURL, this.event).then((resp) => {
+        alert(JSON.stringify(resp.data));
         this.$router.back().catch((error) => {
           console.log(error);
         });
@@ -382,8 +382,8 @@ export default {
     //delete method to call delete event api
     deleteEvent(){
       let apiURL = import.meta.env.VITE_ROOT_API + `/eventdata/eventdata/${this.id}`;
-      axios.delete(apiURL, this.client).then(() => {
-        alert("Event has been deleted.");
+      axios.delete(apiURL, this.client).then((resp) => {
+        alert(JSON.stringify(resp.data));
         this.$router.back().catch((error) => {
           console.log(error);
         });

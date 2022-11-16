@@ -130,7 +130,7 @@ router.get("/eventdata1/:id", (req, res, next) => {
             if (error) {
                 return next(error);
             } else if (data.length < 1) {
-                res.status(404).send('No Clients found for event');
+                res.send('No Clients found for event').status(404);
             } else {
                 res.json(data);
             }
@@ -166,7 +166,7 @@ router.get("/last2months", (req, res, next) => {
         if (error) {
             return next(error);
         } else if (data.length < 1) {
-            res.status(404).send('No events in the past 2 months'); // error handler
+            res.send('No events in the past 2 months').status(404); // error handler
         } else {
             res.json(data);
         }
@@ -192,7 +192,7 @@ router.post("/event", (req, res, next) => {
             if (error) {
                 return next(error);
             } else if (data.length === null) {
-                res.status(404).send('Event not added.');
+                res.send('Event not added.').status(404);
             } else {
                 res.send('Event created'); 
             }
@@ -204,13 +204,13 @@ router.post("/event", (req, res, next) => {
 //PUT that updates based on id in parameter url. 
 router.put("/:id", (req, res, next) => {
     eventdata.findOneAndUpdate(
-        { _id: req.params.id, organizations : ORG_ID },
+        { _id: req.params.id},
         req.body,
         (error, data) => {
             if (error) {
                 return next(error);
-            } else if (data.length === null) {
-                res.status(404).send('Event not found');
+            } else if (data === null) {
+                res.send('Event not found').status(404);
             } else {
                 res.send('Event has been updated');
             }
@@ -231,9 +231,9 @@ router.put('/addattendee/:id', (req, res, next) => {
             if (error) {
             return next(error);
             } else if (data === null) {
-            res.send('Attendee is already in there or event does not exist').status(409);
+            res.send('Attendee is already registered or does not exist').status(409);
             } else {
-            res.send('Attendee ID is added to event array in eventData via PUT');
+            res.send('Attendee is registered to event');
             }
       })
 });
@@ -248,7 +248,7 @@ router.put('/removeattendees/:id', (req, res, next) => {
             if (error) {
             return next(error);
             } else if (data === null) {
-            res.status(409).send('Event does not exist');
+            res.send('Event does not exist').status(409);
             } else {
             res.send('Attendee ID is removed from array in eventData via PUT');
             }
@@ -260,7 +260,9 @@ router.delete('/eventdata/:id', (req, res, next) => {
     eventdata.findOneAndRemove({ _id: req.params.id}, (error, data) => {
         if (error) { // reference https://stackoverflow.com/questions/30417389/the-findoneandremove-and-findoneandupdate-dont-work-as-intended
           return next(error);
-        } else {
+        } else if(data === null){
+            res.send('Event not found').status(404);
+        }else {
            res.status(200).send('The event has been deleted');
         }
       });
