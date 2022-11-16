@@ -235,6 +235,8 @@ export default {
           .post(apiURL, this.event)
           .then(() => {
             alert("Event has been added.");
+            this.$router.back().catch((error) => {
+            console.log(error);
             this.$router.push("/findEvents");
             this.client = {
               eventName: "",
@@ -254,9 +256,8 @@ export default {
           .catch((error) => {
             console.log(error);
           });
-      }
-    },
-  },
+        })}
+  }},
   // sets validations for the various data properties
   validations() {
     return {
