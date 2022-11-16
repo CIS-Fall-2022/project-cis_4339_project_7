@@ -45,10 +45,11 @@
       <section
         class="justify-end items-center h-24 flex"
         style="
-          background: linear-gradient(340deg, #C8102E 70%, #BEC4D4 50.6%);
-        "
+          background: linear-gradient(140deg, #C8102E 70%, #BEC4D4 50.6%);
+          border-radius: 7px;
+          border: 1px solid black"
       >
-        <u class="text-white"><b><h1 class="mr-20 text-3xl text-white">{{ORG_NAME}}</h1></b></u> <!-- shows org name at top-->
+        <u class="text-black"><b><h1 class="mr-20 text-3xl text-black">{{ORG_NAME}}</h1></b></u> <!-- shows org name at top-->
       </section>
       <div>
         <router-view></router-view>
@@ -81,6 +82,11 @@ export default {
 #_container {
   background-color: #c8102e; 
   color: white;
-  padding: 18px;
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 15px;
+
+  display:flex;
+
 }
 </style>
