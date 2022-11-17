@@ -135,7 +135,11 @@ export default {
           `/primarydata/search/?phoneNumbers.primaryPhone=${this.phoneNumber}&searchBy=number`;
       }
       axios.get(apiURL).then((resp) => {
-        this.queryData = resp.data; //send querydata to response data 
+        if (resp.data == 'Client not found') {
+          alert(JSON.stringify(resp.data));
+        }
+        else {
+        this.queryData = resp.data; } //send querydata to response data 
       });
     },
     clearSearch() { //clear search button
