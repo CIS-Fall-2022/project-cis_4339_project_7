@@ -1,13 +1,15 @@
 <template><!-- starts vuejs code-->
   <main>
-    <div>
+    <div style="
+          border-radius: 7px;
+          border: 2.5px solid black">
       <h1 class="font-bold text-4xl text-red-700 tracking-widest text-center mt-10">Find Client</h1>
     </div>
-    <div class="px-10 pt-20">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+    <div class="px-10 pt-20" >
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10" >
         <h2 class="text-2xl font-bold">Search Client By</h2> <!--sets up search by box-->
         <!-- Displays Client Name search field -->
-        <div class="flex flex-col"> <!-- select box-->
+        <div class="flex flex-col" > <!-- select box-->
           <select
             class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             v-model="searchBy"
@@ -75,12 +77,16 @@
         <h3 class="italic">Click table row to edit/display/delete an entry</h3>
       </div>
       <div class="flex flex-col col-span-2"> <!-- sets up div for list-->
-        <table class="min-w-full shadow-md rounded">
+        <table class="min-w-full shadow-md rounded" style="
+          border: .5px solid black">
           <thead class="bg-gray-50 text-xl">
             <tr>
-              <th class="p-4 text-left">Name</th>
-              <th class="p-4 text-left">Phone number</th>
-              <th class="p-4 text-left">City</th>
+              <th class="p-4 text-left" style="
+          border: .5px solid black">Name</th>
+              <th class="p-4 text-left" style="
+          border: .5px solid black">Phone number</th>
+              <th class="p-4 text-left" style="
+          border: .5px solid black">City</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-300">

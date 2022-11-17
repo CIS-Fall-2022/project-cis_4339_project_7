@@ -92,9 +92,15 @@ export default {
 };
 </script>
 <template>
-  <main>
-    <h1 class="font-bold text-4xl text-red-700 tracking-widest text-center mt-10">Client Intake Form</h1>
-    <div class="px-10 py-20">
+  <main><div style="
+          border-radius: 7px;
+          border: 2.5px solid black">
+    <h1 class="font-bold text-4xl text-red-700 tracking-widest text-center mt-10">Client Intake Form</h1></div>
+    <div class="px-10 py-20" style="
+          background: linear-gradient(140deg, #ffffff
+ 70%, #BEC4D4 50.6%);
+          border-radius: 7px;
+          border: 2.5px solid black">
       <!-- @submit.prevent stops the submit event from reloading the page-->
       <form @submit.prevent="handleSubmitForm"> <!-- submit button reference-->
         <!-- grid container -->

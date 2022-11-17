@@ -49,7 +49,7 @@
           border-radius: 7px;
           border: 1px solid black"
       >
-        <u class="text-black"><b><h1 class="mr-20 text-3xl text-black">{{ORG_NAME}}</h1></b></u> <!-- shows org name at top-->
+      <u class="text-black"><b><h1 class="mr-20 text-3xl text-black">{{ORG_NAME}}</h1></b></u> <!-- shows org name at top-->
       </section>
       <div>
         <router-view></router-view>

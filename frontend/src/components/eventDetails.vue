@@ -1,9 +1,15 @@
 <template>
   <main>
-    <div> <!-- sets up div for update event-->
+    <div style="
+          border-radius: 7px;
+          border: 2px solid black"> <!-- sets up div for update event-->
       <h1 class="font-bold text-4xl text-red-700 tracking-widest text-center mt-10">Update Event</h1>
     </div>
-    <div class="px-10 py-20">
+    <div class="px-10 py-20" style="
+          background: linear-gradient(140deg, #ffffff
+ 70%, #BEC4D4 50.6%);
+          border-radius: 7px;
+          border: 2.5px solid black">
       <form @submit.prevent="handleSubmitForm"> <!--sets up button for submit form-->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
           <h2 class="text-2xl font-bold">Event Details</h2> <!--div for event details-->
@@ -223,12 +229,16 @@
             <h3 class="italic">Click table row to edit/display/delete an entry</h3>
           </div>
           <div class="flex flex-col col-span-2">
-            <table class="min-w-full shadow-md rounded"> <!-- sets up div for listing attendees-->
+            <table class="min-w-full shadow-md rounded" style="
+          border: .5px solid black"> <!-- sets up div for listing attendees-->
               <thead class="bg-gray-50 text-xl">
                 <tr>
-                  <th class="p-4 text-left">Name</th>
-                  <th class="p-4 text-left">City</th>
-                  <th class="p-4 text-left">Phone Number</th>
+                  <th class="p-4 text-left" style="
+          border: .5px solid black">Name</th>
+                  <th class="p-4 text-left" style="
+          border: .5px solid black">City</th>
+                  <th class="p-4 text-left" style="
+          border: .5px solid black">Phone Number</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-300">
@@ -259,6 +269,8 @@
               :close-on-select="true"
               track-by="clientName"
               label="clientName"
+              style="
+              border: .5px solid black"
             ></VueMultiselect> <!-- makes a multiselect for clients.-->
             <div class="flex justify-between">
               <button

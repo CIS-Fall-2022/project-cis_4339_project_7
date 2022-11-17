@@ -29,18 +29,21 @@
     <div class="row justify-content-center" style="position: absolute;
   top: 18%;
   left: 42%;">
-    <table class="table table-striped">
+    <table class="table table-striped" style="
+          border: .5px solid black">
       <thead class="table-dark">
         <tr>
-          <th>Event Name</th> <!-- dashboard names for event name and number of clients-->
-          <th>Number of Clients Registered</th>
+          <th style="
+          border: .5px solid black">Event Name</th> <!-- dashboard names for event name and number of clients-->
+          <th >Number of Clients Registered</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody >
         <tr v-for="data in allData" :key="data.id">
-          <td>{{ data.eventName }}</td>
-          <div></div>
-          <td>{{ data.number_of_clients }}</td> <!-- returns the number of clients
+          <td style="
+          border: .5px solid black">{{ data.eventName }}</td>
+        <p></p>
+          <td >{{ data.number_of_clients }}</td> <!-- returns the number of clients
           and event name below the chart-->
         </tr>
       </tbody>

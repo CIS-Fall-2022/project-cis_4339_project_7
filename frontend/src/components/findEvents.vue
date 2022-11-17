@@ -1,6 +1,8 @@
 <template>
   <main>
-    <div>
+    <div style="
+          border-radius: 7px;
+          border: 2.5px solid black">
       <h1 class="font-bold text-4xl text-red-700 tracking-widest text-center mt-10">List of Events</h1>
     </div>
     <div class="px-10 pt-20"> <!-- sets up search event by field div-->
@@ -63,13 +65,18 @@
         <h3 class="italic">Click table row to edit/delete/display an entry</h3>
       </div>
       <div class="flex flex-col col-span-2">
-        <table class="min-w-full shadow-md rounded">
+        <table class="min-w-full shadow-md rounded" style="
+          border: .5px solid black">
           <thead class="bg-gray-50 text-xl">
             <tr> <!-- all variables listed-->
-              <th class="p-4 text-left">Event Name</th>
-              <th class="p-4 text-left">Event Date</th>
-              <th class="p-4 text-left">Event Address</th>
-              <th class="p-4 text-left">Description</th> <!-- event name, event date, address, description-->
+              <th class="p-4 text-left" style="
+          border: .5px solid black">Event Name</th>
+              <th class="p-4 text-left" style="
+          border: .5px solid black">Event Date</th>
+              <th class="p-4 text-left" style="
+          border: .5px solid black">Event Address</th>
+              <th class="p-4 text-left" style="
+          border: .5px solid black">Description</th> <!-- event name, event date, address, description-->
 
             </tr>
           </thead>
