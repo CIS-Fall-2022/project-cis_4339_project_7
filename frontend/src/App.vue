@@ -61,10 +61,10 @@
 <script>
 import axios from "axios";
 export default {
-  name: "App", //import acios
+  name: "App", //import axios
   data(){
     return {
-      ORG_NAME: 'org' //returns org_name from .env file
+      ORG_NAME: 'org', //returns org_name from .env file
     }
   },
   created() {
@@ -72,7 +72,8 @@ export default {
             axios.get(apiURL).then(res => {
                 this.ORG_NAME = res.data.organizationName; //gets organization name from organization route
             }).catch(error => {
-                console.log(error)
+                console.log(error),
+                this.ORG_NAME = error
             });}
 };
 </script>
